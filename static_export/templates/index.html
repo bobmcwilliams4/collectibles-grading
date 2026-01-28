@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ collection_name }} - Curated comic book collection with AI-verified grades">
+    <title>{{ collection_name }}</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>{{ collection_name }}</h1>
+            {% if owner_name %}
+            <p class="subtitle">Curated by {{ owner_name }}</p>
+            {% endif %}
+            <p class="meta">AI-Verified Grades | Last Updated: {{ generated_at }}</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="gallery.html">Full Gallery</a></li>
+            <li><a href="stats.html">Statistics</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total_comics }}</div>
+                <div class="stat-label">Total Comics</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.graded_comics }}</div>
+                <div class="stat-label">Graded Comics</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total_value | currency }}</div>
+                <div class="stat-label">Total Value</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ "%.1f" | format(stats.average_grade) }}</div>
+                <div class="stat-label">Average Grade</div>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="margin-bottom: 20px;">Featured Comics</h2>
+            <div class="comics-grid">
+                {% for comic in featured_comics %}
+                <article class="comic-card">
+                    <a href="comics/comic_{{ comic.id }}.html">
+                        <div class="comic-image">
+                            {% if comic.front_image_path %}
+                            <img src="{{ comic.front_image_path }}" alt="{{ comic.title }}">
+                            {% else %}
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b;">No Image</div>
+                            {% endif %}
+                            {% if comic.consensus_grade %}
+                            <span class="grade-badge {{ comic.consensus_grade | grade_class }}">
+                                {{ comic.consensus_grade }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="comic-info">
+                            <h3>{{ comic.title }}{% if comic.issue_number %} #{{ comic.issue_number }}{% endif %}</h3>
+                            <p class="publisher">{{ comic.publisher or 'Unknown Publisher' }}</p>
+                            {% if comic.consensus_price %}
+                            <p class="price">{{ comic.consensus_price | currency }}</p>
+                            {% endif %}
+                        </div>
+                    </a>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section style="text-align: center; padding: 40px 0;">
+            <a href="gallery.html" style="display: inline-block; padding: 15px 30px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                View Full Gallery &rarr;
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <p>Generated with Comic Grading System | Authority Level 11.0</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">
+            Grades verified by multi-AI consensus (Claude, Gemini, OpenRouter)
+        </p>
+    </footer>
+</body>
+</html>

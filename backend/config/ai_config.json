@@ -1,0 +1,228 @@
+{
+    "version": "2.0.0",
+    "last_updated": "2025-11-30",
+    "autonomous_mode": true,
+
+    "providers": {
+        "anthropic": {
+            "enabled": true,
+            "weight": 0.30,
+            "model": "claude-sonnet-4-20250514",
+            "timeout_seconds": 60,
+            "api_key": null,
+            "notes": "Uses OAuth token from CLAUDE_CODE_OAUTH_TOKEN env var"
+        },
+        "google": {
+            "enabled": true,
+            "weight": 0.20,
+            "model": "gemini-2.0-flash",
+            "timeout_seconds": 60,
+            "api_key": null,
+            "notes": "Uses GOOGLE_API_KEY env var"
+        },
+        "openrouter": {
+            "enabled": true,
+            "weight": 0.25,
+            "models": [
+                "qwen/qwen2.5-vl-72b-instruct:free",
+                "meta-llama/llama-4-maverick:free",
+                "mistralai/mistral-small-3.1-24b-instruct:free",
+                "qwen/qwen2.5-vl-32b-instruct:free",
+                "google/gemma-3-27b-it:free",
+                "meta-llama/llama-4-scout:free",
+                "meta-llama/llama-3.2-11b-vision-instruct:free",
+                "google/gemma-3-12b-it:free",
+                "moonshotai/kimi-vl-a3b-thinking:free",
+                "google/gemma-3-4b-it:free"
+            ],
+            "primary_model": "qwen/qwen2.5-vl-72b-instruct:free",
+            "timeout_seconds": 60,
+            "api_key": null,
+            "notes": "Uses OPENROUTER_API_KEY env var - 10 free vision models"
+        },
+        "cloudflare": {
+            "enabled": true,
+            "weight": 0.05,
+            "model": "@cf/meta/llama-3.2-11b-vision-instruct",
+            "timeout_seconds": 60,
+            "api_key": null,
+            "notes": "Uses CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN - 10K neurons/day free"
+        },
+        "huggingface": {
+            "enabled": true,
+            "weight": 0.05,
+            "models": [
+                "meta-llama/Llama-3.2-11B-Vision-Instruct",
+                "Qwen/Qwen2-VL-7B-Instruct",
+                "microsoft/Phi-3.5-vision-instruct"
+            ],
+            "timeout_seconds": 120,
+            "api_key": null,
+            "notes": "Uses HUGGINGFACE_API_KEY - 500K tokens/min free"
+        },
+        "perplexity": {
+            "enabled": true,
+            "weight": 0.0,
+            "model": "sonar",
+            "timeout_seconds": 60,
+            "api_key": null,
+            "notes": "Research swarm - web search, pricing. Uses PERPLEXITY_API_KEY"
+        },
+        "cohere": {
+            "enabled": true,
+            "weight": 0.0,
+            "model": "command-r-plus",
+            "timeout_seconds": 30,
+            "api_key": null,
+            "notes": "Research swarm - semantic analysis, history. Uses COHERE_API_KEY"
+        },
+        "ollama": {
+            "enabled": true,
+            "weight": 0.05,
+            "model": "llava:latest",
+            "base_url": "http://127.0.0.1:11434",
+            "timeout_seconds": 120,
+            "notes": "Local LLM fallback - requires Ollama running"
+        },
+        "groq": {
+            "enabled": true,
+            "weight": 0.05,
+            "model": "llama-3.2-90b-vision-preview",
+            "timeout_seconds": 30,
+            "api_key": null,
+            "notes": "Ultra-fast inference. Uses GROQ_API_KEY"
+        },
+        "grok": {
+            "enabled": true,
+            "weight": 0.05,
+            "model": "grok-vision-beta",
+            "timeout_seconds": 30,
+            "api_key": null,
+            "notes": "xAI vision model. Uses XAI_API_KEY"
+        },
+        "deepseek": {
+            "enabled": true,
+            "weight": 0.0,
+            "model": "deepseek-chat",
+            "timeout_seconds": 30,
+            "api_key": null,
+            "notes": "Research swarm - text analysis. Uses DEEPSEEK_API_KEY"
+        }
+    },
+
+    "swarm": {
+        "enabled": true,
+        "max_parallel_graders": 15,
+        "min_consensus_providers": 3,
+        "use_all_free_models": true,
+        "vision_models_tier1": [
+            "claude",
+            "gemini",
+            "openrouter_qwen"
+        ],
+        "vision_models_tier2": [
+            "openrouter_llama4_maverick",
+            "openrouter_mistral_small",
+            "openrouter_gemma3",
+            "grok",
+            "groq"
+        ],
+        "vision_models_tier3": [
+            "openrouter_llama",
+            "openrouter_kimi",
+            "cloudflare",
+            "huggingface",
+            "ollama"
+        ],
+        "research_providers": [
+            "perplexity",
+            "cohere",
+            "deepseek"
+        ],
+        "data_scrapers": [
+            "ebay",
+            "cgc_census",
+            "gpa"
+        ]
+    },
+
+    "consensus": {
+        "min_providers": 3,
+        "agreement_threshold": 0.85,
+        "confidence_threshold": 0.80,
+        "defect_confirmation_count": 2,
+        "grade_tolerance": 0.5,
+        "front_weight": 0.70,
+        "back_weight": 0.30,
+        "stricter_grade_bias": 0.3
+    },
+
+    "pricing_sources": {
+        "gpa": {
+            "enabled": true,
+            "weight": 0.40,
+            "rate_limit_seconds": 2.0
+        },
+        "heritage": {
+            "enabled": true,
+            "weight": 0.35,
+            "rate_limit_seconds": 2.0
+        },
+        "ebay": {
+            "enabled": true,
+            "weight": 0.25,
+            "rate_limit_seconds": 1.5,
+            "fetch_sold": true,
+            "fetch_active": true
+        },
+        "cgc_census": {
+            "enabled": true,
+            "rate_limit_seconds": 1.5
+        }
+    },
+
+    "grading": {
+        "cgc_scale": {
+            "10.0": "Gem Mint",
+            "9.9": "Mint",
+            "9.8": "Near Mint/Mint",
+            "9.6": "Near Mint+",
+            "9.4": "Near Mint",
+            "9.2": "Near Mint-",
+            "9.0": "Very Fine/Near Mint",
+            "8.5": "Very Fine+",
+            "8.0": "Very Fine",
+            "7.5": "Very Fine-",
+            "7.0": "Fine/Very Fine",
+            "6.5": "Fine+",
+            "6.0": "Fine",
+            "5.5": "Fine-",
+            "5.0": "Very Good/Fine",
+            "4.5": "Very Good+",
+            "4.0": "Very Good",
+            "3.5": "Very Good-",
+            "3.0": "Good/Very Good",
+            "2.5": "Good+",
+            "2.0": "Good",
+            "1.8": "Good-",
+            "1.5": "Fair/Good",
+            "1.0": "Fair",
+            "0.5": "Poor"
+        },
+        "strictness": "stringent",
+        "notes": "Be stringent - most circulated comics grade 4.0-7.5. 9.0+ is RARE."
+    },
+
+    "image_processing": {
+        "max_dimension": 2048,
+        "quality_threshold": 0.85,
+        "enable_preprocessing": true,
+        "preprocessing_steps": ["orientation", "crop", "enhance", "denoise"]
+    },
+
+    "caching": {
+        "enabled": true,
+        "ttl_seconds": 86400,
+        "max_size_mb": 500
+    }
+}

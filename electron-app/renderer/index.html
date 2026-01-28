@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; media-src 'self' data: blob:; connect-src 'self' http://localhost:* ws://localhost:*;">
+    <title>Echo Prime Omega Comic Grading System</title>
+    <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <canvas id="matrix-rain"></canvas>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-title">
+                    <span class="chromatic-text" data-text="ECHO PRIME OMEGA">ECHO PRIME OMEGA</span>
+                </div>
+                <h1 class="logo">EPOCGS</h1>
+                <span class="version">v1.0.0</span>
+            </div>
+
+            <!-- Collection Selector -->
+            <div class="collection-selector">
+                <div class="collection-current" onclick="toggleCollectionDropdown()">
+                    <span class="collection-icon" id="current-collection-icon">📚</span>
+                    <span class="collection-name" id="current-collection-name">Select Collection</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="collection-dropdown" id="collection-dropdown">
+                    <div class="collection-list" id="collection-list">
+                        <!-- Collections will be populated here -->
+                    </div>
+                    <div class="collection-actions">
+                        <button class="btn btn-small btn-primary" onclick="showNewCollectionModal()">
+                            + New Collection
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="catalog">
+                    <span class="nav-icon">📚</span>
+                    Catalog
+                </a>
+                <a href="#" class="nav-item" data-view="webcam">
+                    <span class="nav-icon">📷</span>
+                    Webcam Grading
+                </a>
+                <a href="#" class="nav-item" data-view="review">
+                    <span class="nav-icon">🔍</span>
+                    Manual Review
+                    <span class="badge" id="review-count">0</span>
+                </a>
+                <a href="#" class="nav-item" data-view="export">
+                    <span class="nav-icon">📤</span>
+                    Export Portal
+                </a>
+                <a href="#" class="nav-item" data-view="analytics">
+                    <span class="nav-icon">📊</span>
+                    Analytics & P&L
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item" data-view="settings">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- AI Rollcall Status Bar -->
+            <div class="ai-rollcall-bar" id="ai-rollcall">
+                <span class="rollcall-label">AI ROLLCALL</span>
+                <div class="ai-status-lights">
+                    <div class="ai-status-item" id="ai-status-claude" title="Claude (Anthropic)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Claude</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-gemini" title="Gemini (Google)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Gemini</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-openrouter" title="OpenRouter (Multi-model)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">OpenRouter</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-groq" title="Groq (Fast Inference)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Groq</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-deepseek" title="DeepSeek">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">DeepSeek</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-grok" title="Grok (xAI)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Grok</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-perplexity" title="Perplexity (Research)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Perplexity</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-cohere" title="Cohere">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Cohere</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-huggingface" title="HuggingFace">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">HF</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-cloudflare" title="Cloudflare Workers AI">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">CF</span>
+                    </div>
+                    <div class="ai-status-item" id="ai-status-ollama" title="Ollama (Local)">
+                        <span class="status-light offline"></span>
+                        <span class="ai-name">Ollama</span>
+                    </div>
+                </div>
+                <span class="rollcall-count" id="ai-ready-count">0/11 Ready</span>
+            </div>
+
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view active">
+                <header class="view-header">
+                    <h2>Dashboard</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="openWebcam()">
+                            <span>📷</span> Start Grading
+                        </button>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Total Comics</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-graded">0</span>
+                            <span class="stat-label">Graded</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-pending">0</span>
+                            <span class="stat-label">Pending Review</span>
+                        </div>
+                    </div>
+                    <div class="stat-card highlight graded-value">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-graded-value">$0</span>
+                            <span class="stat-label">Graded Value</span>
+                        </div>
+                    </div>
+                    <div class="stat-card highlight raw-value">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-raw-value">$0</span>
+                            <span class="stat-label">Raw Value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Grade Distribution</h3>
+                        <div id="grade-chart" class="chart-container"></div>
+                    </div>
+                    <div class="card">
+                        <h3>Recent Activity</h3>
+                        <div id="recent-activity" class="activity-list"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="showView('webcam')">
+                            <span class="action-icon">📷</span>
+                            <span>Webcam Grading</span>
+                        </button>
+                        <button class="action-btn" onclick="importComics()">
+                            <span class="action-icon">📁</span>
+                            <span>Import Images</span>
+                        </button>
+                        <button class="action-btn" onclick="batchGrade()">
+                            <span class="action-icon">⚡</span>
+                            <span>Batch Grade</span>
+                        </button>
+                        <button class="action-btn" onclick="generatePortal()">
+                            <span class="action-icon">🌐</span>
+                            <span>Generate Portal</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Catalog View -->
+            <section id="view-catalog" class="view">
+                <header class="view-header">
+                    <h2>Comic Catalog</h2>
+                    <div class="header-actions">
+                        <input type="text" id="search-input" class="search-input" placeholder="Search comics...">
+                        <button class="btn btn-secondary" onclick="refreshCatalog()">Refresh</button>
+                        <button class="btn btn-success" onclick="openQuickAddModal()">⚡ Quick Add</button>
+                        <button class="btn btn-warning" onclick="openMassLoadModal()">📦 Mass Load</button>
+                        <button class="btn btn-info" onclick="openRapidCaptureModal()">📸 Rapid Capture</button>
+                        <button class="btn btn-primary" onclick="addNewComic()">Add Comic</button>
+                    </div>
+                </header>
+
+                <div class="filters-bar">
+                    <select id="filter-status" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="pending">⏳ Pending</option>
+                        <option value="graded">✅ Graded</option>
+                        <option value="needs_review">⚠️ Needs Review</option>
+                    </select>
+                    <select id="filter-publisher" class="filter-select">
+                        <option value="">All Publishers</option>
+                    </select>
+                    <select id="filter-grade" class="filter-select">
+                        <option value="">All Grades</option>
+                        <option value="9">9.0+</option>
+                        <option value="8">8.0+</option>
+                        <option value="6">6.0+</option>
+                        <option value="4">4.0+</option>
+                    </select>
+                    <select id="filter-sort" class="filter-select">
+                        <option value="date_added">Date Added</option>
+                        <option value="consensus_grade">Grade</option>
+                        <option value="consensus_price">Value</option>
+                        <option value="title">Title</option>
+                    </select>
+                    <select id="filter-group" class="filter-select">
+                        <option value="">No Grouping</option>
+                        <option value="title">Group by Title</option>
+                        <option value="publisher">Group by Publisher</option>
+                        <option value="era">Group by Era</option>
+                    </select>
+                    <button class="btn btn-warning" id="regrade-all-btn" onclick="regradeAllComics()">🔄 Regrade All</button>
+                    <button class="btn btn-info" id="grade-pending-btn" onclick="gradePendingComics()">📊 Grade Pending</button>
+                    <button class="btn btn-success" id="update-prices-btn" onclick="updateAllPrices()">💰 Update Prices</button>
+                    <span class="selection-divider">|</span>
+                    <button class="btn btn-secondary" id="select-mode-btn" onclick="toggleSelectMode()">☐ Select Mode</button>
+                    <button class="btn btn-secondary btn-small" onclick="selectAllComics()">☑ All</button>
+                    <button class="btn btn-secondary btn-small" onclick="deselectAllComics()">☐ Clear</button>
+                    <button class="btn btn-primary" id="grade-selected-btn" onclick="gradeSelected()" disabled>🎯 Grade Selected <span id="selection-count"></span></button>
+                </div>
+
+                <div id="comics-grid" class="comics-grid"></div>
+
+                <div class="pagination">
+                    <button class="btn btn-small" id="prev-page" disabled>Previous</button>
+                    <span id="page-info">Page 1 of 1</span>
+                    <button class="btn btn-small" id="next-page" disabled>Next</button>
+                    <select id="page-size-select" class="filter-select page-size-select">
+                        <option value="25" selected>25 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="100">100 per page</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Webcam View -->
+            <section id="view-webcam" class="view">
+                <header class="view-header">
+                    <h2>Webcam Grading</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="resetCapture()">Reset</button>
+                    </div>
+                </header>
+
+                <div class="webcam-container">
+                    <div class="webcam-preview">
+                        <video id="webcam-video" autoplay playsinline></video>
+                        <canvas id="webcam-canvas"></canvas>
+                        <div class="webcam-overlay" id="webcam-overlay">
+                            <div class="overlay-status">Position comic in frame</div>
+                        </div>
+                    </div>
+
+                    <div class="webcam-controls">
+                        <div class="capture-status">
+                            <div class="status-item">
+                                <span class="status-label">Front Cover:</span>
+                                <span class="status-value" id="front-status">Not Captured</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Back Cover:</span>
+                                <span class="status-value" id="back-status">Not Captured</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Issue # Close-up:</span>
+                                <span class="status-value" id="issue-status">Not Captured</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Quality:</span>
+                                <div class="quality-bar">
+                                    <div class="quality-fill" id="quality-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="capture-buttons">
+                            <button class="btn btn-secondary" id="auto-crop-toggle" onclick="toggleAutoCrop()">
+                                <span>🎯</span> Auto-Crop: ON
+                            </button>
+                            <button class="btn btn-large btn-primary" id="capture-btn" onclick="captureImage()">
+                                <span>📷</span> Capture
+                            </button>
+                            <button class="btn btn-large btn-success" id="grade-btn" onclick="startGrading()" disabled>
+                                <span>🏆</span> Grade Comic
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grading-results" id="grading-results" style="display: none;">
+                    <h3>Grading Scorecard</h3>
+
+                    <!-- Comic Metadata Section -->
+                    <div class="scorecard-section comic-metadata">
+                        <h4>Comic Details</h4>
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="metadata-label">Title:</span>
+                                <span class="metadata-value" id="result-title">--</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Issue #:</span>
+                                <span class="metadata-value" id="result-issue">--</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Year:</span>
+                                <span class="metadata-value" id="result-year">--</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Publisher:</span>
+                                <span class="metadata-value" id="result-publisher">--</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Writer:</span>
+                                <span class="metadata-value" id="result-writer">--</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="metadata-label">Artist:</span>
+                                <span class="metadata-value" id="result-artist">--</span>
+                            </div>
+                        </div>
+                        <!-- Key Highlights Container -->
+                        <div id="key-highlights-container" style="display: none;"></div>
+                    </div>
+
+                    <!-- Consensus Grade -->
+                    <div class="scorecard-section consensus-grade">
+                        <div class="result-card">
+                            <div class="grade-display">
+                                <span class="grade-value" id="result-grade">0.0</span>
+                                <span class="grade-label" id="result-label">--</span>
+                            </div>
+                            <div class="grade-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Confidence:</span>
+                                    <span class="detail-value" id="result-confidence">0%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Estimated Value:</span>
+                                    <span class="detail-value" id="result-price">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voice Personality Toggle -->
+                    <div class="voice-personality-toggle" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <span style="color: #ff6b6b; font-weight: bold;">🔥 BREE</span>
+                        <label class="toggle-switch" style="position: relative; display: inline-block; width: 60px; height: 30px;">
+                            <input type="checkbox" id="personality-toggle" onchange="toggleVoicePersonality()" style="opacity: 0; width: 0; height: 0;">
+                            <span class="toggle-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ff6b6b; transition: 0.4s; border-radius: 30px;"></span>
+                        </label>
+                        <span style="color: #9b59b6; font-weight: bold;">🔮 RAISTLIN</span>
+                    </div>
+                    <style>
+                        .toggle-switch input:checked + .toggle-slider { background-color: #9b59b6; }
+                        .toggle-slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: 0.4s; border-radius: 50%; }
+                        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(30px); }
+                    </style>
+
+                    <!-- Voice Commentary Section (BREE/Raistlin) -->
+                    <div class="scorecard-section bree-commentary-section" id="bree-commentary-section" style="display: none;">
+                        <div class="bree-header" id="personality-header">
+                            <span class="bree-avatar" id="personality-avatar">🔥</span>
+                            <span class="bree-name" id="personality-name">BREE</span>
+                            <span class="bree-emotion" id="bree-emotion-badge">--</span>
+                        </div>
+                        <div class="bree-message" id="bree-commentary-text">
+                            <!-- Dynamic AI commentary will appear here -->
+                        </div>
+                        <button class="btn btn-small btn-bree-speak" onclick="speakCurrentCommentary()" id="speak-btn">
+                            🔊 Hear the Take
+                        </button>
+                    </div>
+
+                    <!-- Individual AI Grades Section - Dynamically populated by app.js -->
+                    <div class="scorecard-section ai-grades-section">
+                        <h4>AI Model Grades (7 Models)</h4>
+                        <div class="ai-grades-grid" id="ai-grades-container">
+                            <!-- Populated dynamically by displayGradingResults() -->
+                            <div class="ai-grades-loading">Loading AI model grades...</div>
+                        </div>
+                    </div>
+
+                    <!-- Market Pricing Data -->
+                    <div class="scorecard-section pricing-section" id="pricing-section">
+                        <h4>💰 Market Pricing</h4>
+                        <div class="pricing-grid">
+                            <div class="pricing-stat cgc-price">
+                                <span class="pricing-label">CGC Price Guide</span>
+                                <span class="pricing-value" id="cgc-price">--</span>
+                            </div>
+                            <div class="pricing-stat ebay-price">
+                                <span class="pricing-label">eBay Avg Sold</span>
+                                <span class="pricing-value" id="ebay-avg-price">--</span>
+                            </div>
+                            <div class="pricing-stat">
+                                <span class="pricing-label">eBay Price Range</span>
+                                <span class="pricing-value" id="ebay-price-range">--</span>
+                            </div>
+                            <div class="pricing-stat">
+                                <span class="pricing-label">eBay Listings</span>
+                                <span class="pricing-value" id="ebay-listings-count">0</span>
+                            </div>
+                        </div>
+                        <div class="recent-sales" id="recent-sales-container" style="display: none;">
+                            <h5>Recent eBay Sales</h5>
+                            <ul class="sales-list" id="recent-sales-list"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Defects Detected -->
+                    <div class="scorecard-section defects-section">
+                        <h4>Detected Defects</h4>
+                        <div class="defects-list" id="defects-list"></div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="scorecard-actions">
+                        <button class="btn btn-success btn-large" onclick="submitToCollection()">
+                            <span>📚</span> Add to Collection
+                        </button>
+                        <button class="btn btn-primary" onclick="editComicDetails()">
+                            <span>✏️</span> Edit Details
+                        </button>
+                        <button class="btn btn-secondary" onclick="adjustGrade()">
+                            <span>📊</span> Adjust Grade
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetCapture()">
+                            <span>🔄</span> Grade Another
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Review View -->
+            <section id="view-review" class="view">
+                <header class="view-header">
+                    <h2>Manual Review Queue</h2>
+                </header>
+
+                <div id="review-queue" class="review-queue"></div>
+            </section>
+
+            <!-- Export View -->
+            <section id="view-export" class="view">
+                <header class="view-header">
+                    <h2>Export & Investor Portal</h2>
+                </header>
+
+                <div class="export-options">
+                    <div class="card">
+                        <h3>Export Catalog</h3>
+                        <div class="export-buttons">
+                            <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+                            <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Investor Portal</h3>
+                        <p>Generate a static HTML portal showcasing your collection for investors.</p>
+                        <button class="btn btn-primary" onclick="generatePortal()">Generate Portal</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="view-settings" class="view">
+                <header class="view-header">
+                    <h2>Settings</h2>
+                </header>
+
+                <div class="settings-container">
+                    <!-- USER PROFILE SECTION -->
+                    <div class="settings-section profile-section">
+                        <h3>👤 User Profile</h3>
+                        <div class="setting-item">
+                            <label>Your Name / Display Name</label>
+                            <input type="text" id="setting-user-name" placeholder="Commander, Bobby, etc.">
+                            <small class="setting-hint">How Bree and Raistlin will address you</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>Collector Type</label>
+                            <select id="setting-collector-type">
+                                <option value="collector">Personal Collector</option>
+                                <option value="investor">Investor</option>
+                                <option value="dealer">Dealer/Reseller</option>
+                                <option value="store">Store Owner</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Primary Focus</label>
+                            <select id="setting-primary-focus">
+                                <option value="comics">Comic Books</option>
+                                <option value="cards">Trading Cards</option>
+                                <option value="coins">Coins</option>
+                                <option value="stamps">Stamps</option>
+                                <option value="vinyl">Vinyl Records</option>
+                                <option value="figures">Action Figures</option>
+                                <option value="mixed">Mixed Collectibles</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Experience Level</label>
+                            <select id="setting-experience-level">
+                                <option value="beginner">Beginner (0-2 years)</option>
+                                <option value="intermediate">Intermediate (2-5 years)</option>
+                                <option value="advanced">Advanced (5-10 years)</option>
+                                <option value="expert">Expert (10+ years)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Email (Optional)</label>
+                            <input type="email" id="setting-user-email" placeholder="your@email.com">
+                            <small class="setting-hint">For export reports and notifications</small>
+                        </div>
+                    </div>
+
+                    <!-- VOICE PERSONALITY SECTION -->
+                    <div class="settings-section voice-section">
+                        <h3>🎙️ Voice Personality</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-voice" checked>
+                                Enable Voice Feedback
+                            </label>
+                            <small class="setting-hint">AI personality speaks grading results</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>Voice Personality</label>
+                            <div class="personality-selector">
+                                <label class="personality-option">
+                                    <input type="radio" name="voice-personality" value="bree" checked>
+                                    <div class="personality-card">
+                                        <span class="personality-icon">🔥</span>
+                                        <span class="personality-name">BREE</span>
+                                        <span class="personality-desc">Brutally honest, vulgar, no-BS</span>
+                                    </div>
+                                </label>
+                                <label class="personality-option">
+                                    <input type="radio" name="voice-personality" value="raistlin">
+                                    <div class="personality-card">
+                                        <span class="personality-icon">🔮</span>
+                                        <span class="personality-name">RAISTLIN</span>
+                                        <span class="personality-desc">Arcane wizard, sardonic wisdom</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <label>Voice Volume</label>
+                            <input type="range" id="setting-voice-volume" min="0" max="1" step="0.1" value="1.0">
+                            <span id="voice-volume-value">100%</span>
+                        </div>
+                        <div class="setting-item">
+                            <button class="btn btn-secondary" onclick="testVoice()">
+                                <span>🔊</span> Test Voice
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STORE/BUSINESS PROFILE -->
+                    <div class="settings-section store-profile-section" id="store-profile-section">
+                        <h3>🏪 Store/Business Profile</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-store-mode">
+                                Enable Store Mode
+                            </label>
+                            <small class="setting-hint">Track inventory, purchases, and sales P&L</small>
+                        </div>
+                        <div class="store-details" id="store-details">
+                            <div class="setting-item">
+                                <label>Store/Business Name</label>
+                                <input type="text" id="setting-store-name" placeholder="Your Comic Shop">
+                            </div>
+                            <div class="setting-item">
+                                <label>Business Address</label>
+                                <input type="text" id="setting-store-address" placeholder="123 Main St, City, State ZIP">
+                            </div>
+                            <div class="setting-item">
+                                <label>Business Phone</label>
+                                <input type="tel" id="setting-store-phone" placeholder="(555) 123-4567">
+                            </div>
+                            <div class="setting-item">
+                                <label>Business Website</label>
+                                <input type="url" id="setting-store-website" placeholder="https://yourstore.com">
+                            </div>
+                            <div class="setting-item">
+                                <label>Tax ID / EIN (Optional)</label>
+                                <input type="text" id="setting-store-taxid" placeholder="XX-XXXXXXX">
+                                <small class="setting-hint">For professional invoices</small>
+                            </div>
+                            <div class="setting-item">
+                                <label>Default Sales Tax (%)</label>
+                                <input type="number" id="setting-sales-tax" min="0" max="15" step="0.25" value="0">
+                            </div>
+                            <div class="setting-item">
+                                <label>Default Markup (%)</label>
+                                <input type="number" id="setting-default-markup" min="0" max="500" step="5" value="30">
+                                <small class="setting-hint">Applied to FMV for retail pricing</small>
+                            </div>
+                            <div class="setting-item">
+                                <label>Store Logo</label>
+                                <input type="file" id="setting-store-logo" accept="image/*">
+                                <small class="setting-hint">Used in invoices and portal</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>API Configuration</h3>
+                        <div class="setting-item">
+                            <label>Backend URL</label>
+                            <input type="text" id="setting-api-url" value="http://localhost:8000">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Visual Effects & Performance</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-matrix-rain" checked>
+                                Enable Matrix Rain Background
+                            </label>
+                            <small class="setting-hint">Disable to reduce GPU/memory usage</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>Matrix Rain Opacity</label>
+                            <input type="range" id="setting-matrix-opacity" min="0.1" max="0.5" step="0.05" value="0.35">
+                            <span id="matrix-opacity-value">35%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-animations" checked>
+                                Enable UI Animations
+                            </label>
+                            <small class="setting-hint">Disable for better performance on slower machines</small>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Pricing Sources</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-ebay-scraper" checked>
+                                Enable eBay Sold Listings Scraper
+                            </label>
+                            <small class="setting-hint">Fetches real sold prices from eBay</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-gpa-scraper" checked>
+                                Enable GoCollect/GPA Pricing
+                            </label>
+                            <small class="setting-hint">Premium graded comic values</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-heritage-scraper" checked>
+                                Enable Heritage Auctions Data
+                            </label>
+                            <small class="setting-hint">High-end auction results</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>Price Cache Duration (hours)</label>
+                            <input type="number" id="setting-price-cache" min="1" max="168" value="24">
+                            <small class="setting-hint">How long to cache pricing data</small>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Grading Settings</h3>
+                        <div class="setting-item">
+                            <label>Quality Threshold</label>
+                            <input type="range" id="setting-quality" min="0.5" max="1" step="0.05" value="0.85">
+                            <span id="quality-value">85%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-auto-capture" checked>
+                                Auto-capture when stable
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>CGC Account Integration</h3>
+                        <div class="cgc-status" id="cgc-status">
+                            <span class="status-indicator disconnected"></span>
+                            <span class="status-text">Not Connected</span>
+                        </div>
+                        <div class="setting-item">
+                            <label>CGC Username/Email</label>
+                            <input type="text" id="setting-cgc-username" placeholder="Your CGC username or email">
+                        </div>
+                        <div class="setting-item">
+                            <label>CGC Password</label>
+                            <input type="password" id="setting-cgc-password" placeholder="Your CGC password">
+                            <button type="button" class="btn btn-small btn-icon" onclick="togglePasswordVisibility('setting-cgc-password')">
+                                <span id="cgc-pwd-toggle-icon">👁</span>
+                            </button>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-cgc-auto-login">
+                                Enable Auto-login for CGC
+                            </label>
+                            <small class="setting-hint">Automatically sign in for census data and pricing</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-cgc-save-session">
+                                Remember Session (7 days)
+                            </label>
+                            <small class="setting-hint">Avoid frequent re-authentication</small>
+                        </div>
+                        <div class="setting-actions">
+                            <button class="btn btn-secondary" onclick="testCGCConnection()">
+                                <span id="cgc-test-icon">🔌</span> Test Connection
+                            </button>
+                            <button class="btn btn-secondary" onclick="cgcLogout()" id="cgc-logout-btn" disabled>
+                                Logout
+                            </button>
+                        </div>
+                        <small class="setting-hint cgc-features">
+                            CGC integration enables: Census data lookup, population reports,
+                            grading verification, and authenticated pricing access
+                        </small>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Optional Fields Control</h3>
+                        <small class="setting-hint section-hint">Choose which fields are required when adding items. Only title is always required.</small>
+                        <div class="optional-fields-grid">
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-issue-number" checked>
+                                    Issue Number
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-publisher" checked>
+                                    Publisher
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-year">
+                                    Year
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-grade">
+                                    Grade
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-variant">
+                                    Variant
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-condition-notes">
+                                    Condition Notes
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-buy-price">
+                                    Buy Price
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-buy-date">
+                                    Buy Date
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-cert-number">
+                                    Cert Number
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="field-location">
+                                    Storage Location
+                                </label>
+                            </div>
+                        </div>
+                        <small class="setting-hint">Unchecked fields will be optional when adding new items</small>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Data Sharing & Market Analytics</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-share-prices">
+                                Share anonymized pricing data
+                            </label>
+                            <small class="setting-hint">Help build market trends by sharing sale prices (no personal info)</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-receive-trends" checked>
+                                Receive market trend notifications
+                            </label>
+                            <small class="setting-hint">Get alerts when items in your collection trend up/down</small>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="setting-community-pricing">
+                                Use community pricing data
+                            </label>
+                            <small class="setting-hint">Include aggregated hobby shop pricing in valuations</small>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </section>
+
+            <!-- Analytics View -->
+            <section id="view-analytics" class="view">
+                <header class="view-header">
+                    <h2>Analytics & P&L</h2>
+                </header>
+
+                <div class="analytics-summary">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="analytics-total-invested">$0</span>
+                                <span class="stat-label">Total Invested</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="analytics-current-value">$0</span>
+                                <span class="stat-label">Current Value</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💵</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="analytics-total-sales">$0</span>
+                                <span class="stat-label">Total Sales</span>
+                            </div>
+                        </div>
+                        <div class="stat-card highlight">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="analytics-net-pnl">$0</span>
+                                <span class="stat-label">Net P&L</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>ROI by Category</h3>
+                        <div id="roi-chart" class="chart-container"></div>
+                    </div>
+                    <div class="card">
+                        <h3>Recent Transactions</h3>
+                        <div id="recent-transactions" class="activity-list"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Profit/Loss Summary</h3>
+                    <div class="pnl-table-container">
+                        <table class="pnl-table" id="pnl-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Buy Price</th>
+                                    <th>Current/Sold</th>
+                                    <th>P&L</th>
+                                    <th>ROI %</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pnl-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Ask Claude Floating Button -->
+    <button class="ask-claude-btn" id="ask-claude-btn" onclick="toggleClaudePanel()">
+        <span class="claude-icon">🤖</span>
+        <span class="btn-text">Ask Claude</span>
+    </button>
+
+    <!-- Claude Chat Panel (Sliding) -->
+    <div class="claude-panel" id="claude-panel">
+        <div class="claude-panel-header">
+            <div class="claude-header-title">
+                <span class="claude-icon">🤖</span>
+                <h3>Claude Assistant</h3>
+            </div>
+            <div class="claude-auth-status" id="claude-auth-status">
+                <span class="auth-indicator disconnected" id="auth-indicator"></span>
+                <button class="claude-login-btn" id="claude-login-btn" onclick="initiateClaudeOAuth()">Connect</button>
+            </div>
+            <button class="claude-close-btn" onclick="toggleClaudePanel()">&times;</button>
+        </div>
+
+        <div class="claude-panel-content">
+            <!-- Chat History -->
+            <div class="claude-messages" id="claude-messages">
+                <div class="claude-message assistant">
+                    <div class="message-content">
+                        Hello! I'm Claude, your comic collection assistant. I can help you:
+                        <ul>
+                            <li>Organize and categorize your collection</li>
+                            <li>Find specific comics or runs</li>
+                            <li>Get insights about your collection's value</li>
+                            <li>Answer questions about comic grading</li>
+                            <li>Suggest comics to complete your runs</li>
+                        </ul>
+                        How can I help you today?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="claude-quick-actions">
+                <button class="quick-action-btn" onclick="claudeQuickAction('organize')">
+                    📁 Organize Collection
+                </button>
+                <button class="quick-action-btn" onclick="claudeQuickAction('analyze')">
+                    📊 Analyze Value
+                </button>
+                <button class="quick-action-btn" onclick="claudeQuickAction('missing')">
+                    🔍 Find Missing Issues
+                </button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="claude-input-area">
+                <textarea
+                    id="claude-input"
+                    placeholder="Ask Claude about your collection..."
+                    rows="2"
+                    onkeydown="handleClaudeInputKeydown(event)"
+                ></textarea>
+                <button class="claude-send-btn" onclick="sendClaudeMessage()">
+                    <span>Send</span>
+                    <span class="send-icon">➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

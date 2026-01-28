@@ -1,0 +1,117 @@
+{
+    "sheldon_scale": {
+        "MS-70": {"label": "Perfect Uncirculated", "description": "A perfectly struck coin with no marks, hairlines, or other defects. Full original luster and eye appeal.", "numeric": 70},
+        "MS-69": {"label": "Near Perfect Uncirculated", "description": "Nearly perfect with only trivial imperfections. Full original luster.", "numeric": 69},
+        "MS-68": {"label": "Superb Gem Uncirculated", "description": "Only the slightest weakness of strike or minor marks. Full luster.", "numeric": 68},
+        "MS-67": {"label": "Superb Gem Uncirculated", "description": "Above average strike and only minor defects. Full luster.", "numeric": 67},
+        "MS-66": {"label": "Gem Uncirculated", "description": "Well struck with few minor marks or blemishes.", "numeric": 66},
+        "MS-65": {"label": "Gem Uncirculated", "description": "Strong luster, strike, and surface quality. Light contact marks may be present.", "numeric": 65},
+        "MS-64": {"label": "Choice Uncirculated", "description": "Moderate distracting marks or minor blemishes.", "numeric": 64},
+        "MS-63": {"label": "Choice Uncirculated", "description": "Several contact marks and blemishes.", "numeric": 63},
+        "MS-62": {"label": "Uncirculated", "description": "No trace of wear. Noticeable blemishes.", "numeric": 62},
+        "MS-61": {"label": "Uncirculated", "description": "No trace of wear. Many contact marks.", "numeric": 61},
+        "MS-60": {"label": "Uncirculated", "description": "No trace of wear. Numerous contact marks and rim damage possible.", "numeric": 60},
+        "AU-58": {"label": "Choice About Uncirculated", "description": "Slight trace of wear on highest points.", "numeric": 58},
+        "AU-55": {"label": "Choice About Uncirculated", "description": "Obvious trace of wear on high points. Half of mint luster remains.", "numeric": 55},
+        "AU-53": {"label": "About Uncirculated", "description": "Wear on high points. Less than half luster remains.", "numeric": 53},
+        "AU-50": {"label": "About Uncirculated", "description": "Wear visible on all high points. Minor luster remains.", "numeric": 50},
+        "EF-45": {"label": "Choice Extremely Fine", "description": "Light wear on high points. All design clearly visible.", "numeric": 45},
+        "EF-40": {"label": "Extremely Fine", "description": "Light wear throughout. All features sharp and clear.", "numeric": 40},
+        "VF-35": {"label": "Choice Very Fine", "description": "Light to moderate wear on all design elements.", "numeric": 35},
+        "VF-30": {"label": "Choice Very Fine", "description": "Light to moderate even wear. All lettering and features sharp.", "numeric": 30},
+        "VF-25": {"label": "Very Fine", "description": "Moderate to heavy even wear. Major features clear.", "numeric": 25},
+        "VF-20": {"label": "Very Fine", "description": "Moderate to considerable even wear. All lettering visible.", "numeric": 20},
+        "F-15": {"label": "Choice Fine", "description": "Moderate to heavy even wear. Entire design clear.", "numeric": 15},
+        "F-12": {"label": "Fine", "description": "Even moderate to heavy wear. Entire design visible.", "numeric": 12},
+        "VG-10": {"label": "Choice Very Good", "description": "Well worn. Major features clear but flat.", "numeric": 10},
+        "VG-8": {"label": "Very Good", "description": "Well worn. Major features visible, but faint.", "numeric": 8},
+        "G-6": {"label": "Choice Good", "description": "Heavily worn. Design visible but faint in spots.", "numeric": 6},
+        "G-4": {"label": "Good", "description": "Heavily worn. Design visible but details flat.", "numeric": 4},
+        "AG-3": {"label": "About Good", "description": "Very heavily worn. Outline visible. Some detail.", "numeric": 3},
+        "FR-2": {"label": "Fair", "description": "Extremely heavily worn. Mostly outline visible.", "numeric": 2},
+        "PO-1": {"label": "Poor", "description": "Barely identifiable. Date may be readable.", "numeric": 1}
+    },
+    "proof_grades": {
+        "PF-70": {"label": "Perfect Proof", "description": "A coin with no post-production defects.", "numeric": 70},
+        "PF-69": {"label": "Near Perfect Proof", "description": "Virtually perfect with trivial imperfections.", "numeric": 69},
+        "PF-68": {"label": "Superb Gem Proof", "description": "Only slight weakness or minor hairlines.", "numeric": 68},
+        "PF-67": {"label": "Superb Gem Proof", "description": "Above average specimen with minor defects.", "numeric": 67},
+        "PF-66": {"label": "Gem Proof", "description": "Brilliant with minor defects.", "numeric": 66},
+        "PF-65": {"label": "Gem Proof", "description": "Mirror brilliance with minor hairlines.", "numeric": 65},
+        "PF-64": {"label": "Choice Proof", "description": "Light scattered hairlines.", "numeric": 64},
+        "PF-63": {"label": "Choice Proof", "description": "Some hairlines and minor blemishes.", "numeric": 63},
+        "PF-62": {"label": "Proof", "description": "Noticeable hairlines.", "numeric": 62},
+        "PF-61": {"label": "Proof", "description": "Numerous hairlines.", "numeric": 61},
+        "PF-60": {"label": "Proof", "description": "Brilliant but with many hairlines.", "numeric": 60}
+    },
+    "grading_criteria": {
+        "strike": {
+            "weight": 0.20,
+            "levels": {
+                "full": {"description": "Full design detail visible", "bonus": 0},
+                "average": {"description": "Normal strike for the issue", "penalty": 0},
+                "weak": {"description": "Some design details soft or missing", "penalty": -1},
+                "flat": {"description": "Major design elements weak or missing", "penalty": -3}
+            }
+        },
+        "luster": {
+            "weight": 0.25,
+            "types": {
+                "original": {"description": "Full mint luster", "bonus": 0},
+                "cleaned": {"description": "Coin has been cleaned", "penalty": -10, "note": "Results in details grade"},
+                "artificial": {"description": "Artificially retoned", "penalty": -5},
+                "dull": {"description": "Luster has been diminished", "penalty": -2}
+            }
+        },
+        "surface_preservation": {
+            "weight": 0.30,
+            "defects": {
+                "contact_marks": {"light": -1, "moderate": -2, "heavy": -4},
+                "hairlines": {"light": -1, "moderate": -2, "heavy": -3},
+                "scratches": {"light": -2, "moderate": -4, "heavy": -6},
+                "rim_damage": {"minor": -1, "moderate": -3, "major": -5}
+            }
+        },
+        "eye_appeal": {
+            "weight": 0.25,
+            "levels": {
+                "exceptional": {"bonus": +2, "description": "Outstanding visual appearance"},
+                "average": {"bonus": 0, "description": "Normal for the grade"},
+                "below_average": {"penalty": -1, "description": "Less attractive than typical"}
+            }
+        }
+    },
+    "toning": {
+        "original": {"description": "Natural toning from age", "effect": "may enhance value"},
+        "artificial": {"description": "Chemically or heat induced toning", "effect": "Details grade"},
+        "colors": {
+            "rainbow": {"desirability": "highly desirable", "premium": "+10-50%"},
+            "gold": {"desirability": "desirable", "premium": "+5-20%"},
+            "blue": {"desirability": "desirable", "premium": "+5-15%"},
+            "purple": {"desirability": "desirable", "premium": "+5-15%"},
+            "brown": {"desirability": "neutral", "premium": "0%"},
+            "black": {"desirability": "undesirable", "discount": "-10-30%"}
+        }
+    },
+    "designations": {
+        "plus": {"symbol": "+", "description": "High-end for the grade", "premium": "+10-25%"},
+        "star": {"symbol": "*", "description": "Exceptional eye appeal", "premium": "+15-50%"},
+        "CAM": {"description": "Cameo (proof)", "premium": "+15-30%"},
+        "DCAM": {"description": "Deep Cameo (proof)", "premium": "+30-100%"},
+        "FB": {"description": "Full Bands (Mercury dimes)", "premium": "+20-100%"},
+        "FH": {"description": "Full Head (Standing Liberty quarters)", "premium": "+50-300%"},
+        "FSB": {"description": "Full Split Bands", "premium": "+20-100%"},
+        "FBL": {"description": "Full Bell Lines (Franklin halves)", "premium": "+30-150%"}
+    },
+    "coin_types": {
+        "us_coins": {
+            "copper": ["Large Cent", "Half Cent", "Indian Head Cent", "Lincoln Cent", "Two Cent"],
+            "nickel": ["Shield Nickel", "Liberty Nickel", "Buffalo Nickel", "Jefferson Nickel"],
+            "silver": ["Bust Half Dime", "Seated Half Dime", "Bust Dime", "Seated Dime", "Barber Dime", "Mercury Dime", "Roosevelt Dime", "Bust Quarter", "Seated Quarter", "Barber Quarter", "Standing Liberty Quarter", "Washington Quarter", "Bust Half", "Seated Half", "Barber Half", "Walking Liberty Half", "Franklin Half", "Kennedy Half", "Morgan Dollar", "Peace Dollar", "Trade Dollar", "Bust Dollar", "Seated Dollar"],
+            "gold": ["Gold Dollar", "$2.50 Liberty", "$2.50 Indian", "$3 Gold", "$5 Liberty", "$5 Indian", "$10 Liberty", "$10 Indian", "$20 Liberty", "$20 Saint-Gaudens"]
+        },
+        "world_coins": {
+            "categories": ["Ancient", "Medieval", "Colonial", "Modern"]
+        }
+    }
+}

@@ -1,0 +1,21 @@
+# Secrets
+.env
+*.env
+**/.env
+backend/.env
+# Node.js
+node_modules/
+**/node_modules/
+# Build outputs
+dist/
+**/dist/
+.next/
+**/.next/
+build/
+**/build/
+# Electron binaries
+*.exe
+*.dmg
+*.app
+# Large files
+*.node

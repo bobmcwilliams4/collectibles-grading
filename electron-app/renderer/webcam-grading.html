@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; connect-src 'self' http://localhost:* ws://localhost:*;">
+    <title>Webcam Grading - Comic Grading System</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0f0f1a;
+            min-height: 100vh;
+        }
+        .webcam-page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .webcam-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        .webcam-page-header h1 {
+            color: #0ff;
+            margin: 0;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="webcam-page-container">
+        <header class="webcam-page-header">
+            <h1>Webcam Grading</h1>
+            <button class="btn btn-secondary" onclick="window.close()">Close</button>
+        </header>
+
+        <div class="webcam-container">
+            <div class="webcam-preview">
+                <video id="webcam-video" autoplay playsinline></video>
+                <canvas id="webcam-canvas"></canvas>
+                <div class="webcam-overlay" id="webcam-overlay">
+                    <div class="overlay-status">Position comic in frame</div>
+                </div>
+            </div>
+
+            <div class="webcam-controls">
+                <div class="capture-status">
+                    <div class="status-item">
+                        <span class="status-label">Front Cover:</span>
+                        <span class="status-value" id="front-status">Not Captured</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Back Cover:</span>
+                        <span class="status-value" id="back-status">Not Captured</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Quality:</span>
+                        <div class="quality-bar">
+                            <div class="quality-fill" id="quality-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="capture-buttons">
+                    <button class="btn btn-secondary" id="auto-crop-toggle" onclick="toggleAutoCrop()">
+                        Auto-Crop: ON
+                    </button>
+                    <button class="btn btn-large btn-primary" id="capture-btn" onclick="captureImage()">
+                        Capture
+                    </button>
+                    <button class="btn btn-large btn-success" id="grade-btn" onclick="startGrading()" disabled>
+                        Grade Comic
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grading-results" id="grading-results" style="display: none;">
+            <h3>Grading Results</h3>
+            <div class="result-card">
+                <div class="grade-display">
+                    <span class="grade-value" id="result-grade">0.0</span>
+                    <span class="grade-label" id="result-label">--</span>
+                </div>
+                <div class="grade-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Confidence:</span>
+                        <span class="detail-value" id="result-confidence">0%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Estimated Value:</span>
+                        <span class="detail-value" id="result-price">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scorecard-section ai-grades-section">
+                <h4>AI Model Grades</h4>
+                <div class="ai-grades-grid" id="ai-grades-container"></div>
+            </div>
+
+            <div class="defects-section">
+                <h4>Detected Defects</h4>
+                <div id="defects-list" class="defects-list"></div>
+            </div>
+
+            <div class="scorecard-actions">
+                <button class="btn btn-success" onclick="submitToCollection()">Add to Collection</button>
+                <button class="btn btn-secondary" onclick="resetCapture()">Grade Another</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize webcam on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initWebcam === 'function') {
+                initWebcam();
+            }
+        });
+    </script>
+</body>
+</html>

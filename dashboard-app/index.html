@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collectibles Grading - Matrix Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --matrix-purple: #9d00ff;
+            --matrix-magenta: #ff00ff;
+            --matrix-pink: #ff0080;
+            --matrix-cyan: #00ffff;
+            --matrix-green: #00ff41;
+            --dark-bg: #0a0010;
+            --darker-bg: #050008;
+            --panel-bg: rgba(20, 0, 40, 0.7);
+            --border-glow: rgba(157, 0, 255, 0.5);
+            --text-primary: #e0d0ff;
+            --text-secondary: rgba(200, 180, 255, 0.7);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, #100020 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Canvas */
+        #matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        /* Hexagon Grid Overlay */
+        .hex-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239d00ff' fill-opacity='0.05'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        /* Scan Lines */
+        .scan-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+            animation: scanMove 10s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        /* Glitch Scanner */
+        .glitch-scanner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--matrix-purple) 20%,
+                var(--matrix-magenta) 50%,
+                var(--matrix-purple) 80%,
+                transparent 100%
+            );
+            z-index: 4;
+            animation: scanDown 4s ease-in-out infinite;
+            box-shadow: 0 0 30px var(--matrix-purple), 0 0 60px var(--matrix-magenta);
+        }
+
+        @keyframes scanDown {
+            0%, 100% { top: -10px; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Title Bar */
+        .title-bar {
+            -webkit-app-region: drag;
+            position: relative;
+            z-index: 100;
+            height: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            background: linear-gradient(180deg, rgba(157, 0, 255, 0.2) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(157, 0, 255, 0.3);
+        }
+
+        .title-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--matrix-purple);
+            text-shadow: 0 0 10px var(--matrix-purple);
+        }
+
+        .window-controls {
+            -webkit-app-region: no-drag;
+            display: flex;
+            gap: 10px;
+        }
+
+        .win-btn {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.8;
+        }
+
+        .win-btn:hover { opacity: 1; transform: scale(1.2); }
+        .btn-close { background: #ff5f56; }
+        .btn-min { background: #ffbd2e; }
+        .btn-max { background: #27ca3f; }
+
+        /* Main Content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            height: calc(100% - 45px);
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--matrix-purple), var(--matrix-magenta), var(--matrix-purple), transparent);
+        }
+
+        .panel:hover {
+            border-color: rgba(157, 0, 255, 0.6);
+            box-shadow: 0 0 40px rgba(157, 0, 255, 0.2), inset 0 0 40px rgba(157, 0, 255, 0.05);
+        }
+
+        .panel-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(157, 0, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: var(--matrix-purple);
+            text-transform: uppercase;
+        }
+
+        .panel-content {
+            padding: 20px;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            grid-row: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Navigation */
+        .nav-panel .panel-content {
+            padding: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-bottom: 5px;
+        }
+
+        .nav-item:hover {
+            background: rgba(157, 0, 255, 0.15);
+            border-color: rgba(157, 0, 255, 0.3);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(157, 0, 255, 0.3), rgba(255, 0, 255, 0.2));
+            border-color: var(--matrix-purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .nav-label {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--matrix-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(157, 0, 255, 0.2);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--matrix-cyan);
+            text-shadow: 0 0 20px var(--matrix-cyan);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* Center Content */
+        .center-content {
+            grid-column: 2;
+            grid-row: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Hero Stats */
+        .hero-panel {
+            min-height: 200px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .hero-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(157, 0, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-stat::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--matrix-purple), var(--matrix-magenta));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-stat:hover::after {
+            transform: scaleX(1);
+        }
+
+        .hero-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--matrix-purple), var(--matrix-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Activity Feed */
+        .activity-panel {
+            flex: 1;
+        }
+
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb {
+            background: var(--matrix-purple);
+            border-radius: 3px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(157, 0, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(157, 0, 255, 0.1);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--matrix-purple), var(--matrix-magenta));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .activity-grade {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--matrix-cyan);
+            text-shadow: 0 0 10px var(--matrix-cyan);
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            grid-row: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* System Monitor */
+        .system-panel .panel-content {
+            padding: 15px;
+        }
+
+        .meter-container {
+            margin-bottom: 20px;
+        }
+
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .meter-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .meter-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: var(--matrix-cyan);
+        }
+
+        .meter-bar {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .meter-fill.cpu {
+            background: linear-gradient(90deg, var(--matrix-purple), var(--matrix-magenta));
+            box-shadow: 0 0 15px var(--matrix-purple);
+        }
+
+        .meter-fill.memory {
+            background: linear-gradient(90deg, var(--matrix-cyan), var(--matrix-green));
+            box-shadow: 0 0 15px var(--matrix-cyan);
+        }
+
+        .meter-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+            animation: meterShine 2s ease-in-out infinite;
+        }
+
+        @keyframes meterShine {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Console */
+        .console-panel {
+            flex: 1;
+        }
+
+        .console {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            overflow-y: auto;
+            border: 1px solid rgba(157, 0, 255, 0.2);
+        }
+
+        .console::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .console::-webkit-scrollbar-thumb {
+            background: var(--matrix-purple);
+            border-radius: 3px;
+        }
+
+        .console-line {
+            margin-bottom: 4px;
+            line-height: 1.5;
+            opacity: 0;
+            animation: consoleFade 0.3s ease forwards;
+        }
+
+        @keyframes consoleFade {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .console-line .time {
+            color: rgba(157, 0, 255, 0.6);
+        }
+
+        .console-line.info { color: var(--matrix-cyan); }
+        .console-line.success { color: var(--matrix-green); }
+        .console-line.warning { color: #ffaa00; }
+        .console-line.error { color: #ff4444; }
+        .console-line.system { color: var(--matrix-purple); }
+
+        /* Quick Actions */
+        .actions-panel .panel-content {
+            padding: 15px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(157, 0, 255, 0.3), rgba(255, 0, 255, 0.2));
+            border-color: var(--matrix-purple);
+            box-shadow: 0 0 25px rgba(157, 0, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        .action-btn:active {
+            transform: translateX(2px) scale(0.98);
+        }
+
+        .action-icon {
+            font-size: 18px;
+        }
+
+        /* AI Provider Badges */
+        .providers-panel .panel-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 15px;
+        }
+
+        .provider-badge {
+            padding: 8px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .provider-badge:hover {
+            border-color: var(--matrix-purple);
+            color: var(--matrix-purple);
+            background: rgba(157, 0, 255, 0.1);
+            box-shadow: 0 0 15px rgba(157, 0, 255, 0.3);
+        }
+
+        .provider-badge.active {
+            border-color: var(--matrix-cyan);
+            color: var(--matrix-cyan);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        /* Sound Toggle */
+        .sound-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--matrix-purple);
+            color: var(--matrix-purple);
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(157, 0, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(157, 0, 255, 0.5);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+            border-color: rgba(157, 0, 255, 0.3);
+        }
+
+        /* Glitch Text Effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite linear alternate-reverse;
+            color: var(--matrix-cyan);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 3s infinite linear alternate-reverse;
+            color: var(--matrix-magenta);
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(-2px, 0); }
+            20% { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
+            40% { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 0); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(2px, 0); }
+            20% { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 0); }
+            40% { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
+            60% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 0); }
+            80% { clip-path: inset(70% 0 10% 0); transform: translate(2px, 0); }
+        }
+
+        /* Data visualization area */
+        .viz-container {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #wave-canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Matrix Rain Background -->
+        <canvas id="matrix-canvas"></canvas>
+
+        <!-- Overlays -->
+        <div class="hex-grid"></div>
+        <div class="scan-lines"></div>
+        <div class="glitch-scanner"></div>
+
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <span class="title-text glitch" data-text="MATRIX DASHBOARD">MATRIX DASHBOARD</span>
+            <div class="window-controls">
+                <button class="win-btn btn-min" onclick="minimizeWindow()"></button>
+                <button class="win-btn btn-max" onclick="maximizeWindow()"></button>
+                <button class="win-btn btn-close" onclick="closeWindow()"></button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <!-- Navigation -->
+                <div class="panel nav-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">◈</span>
+                        <span class="panel-title">Navigation</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="nav-item active" onclick="selectNav(this)">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-label">Dashboard</span>
+                        </div>
+                        <div class="nav-item" onclick="selectNav(this)">
+                            <span class="nav-icon">🎯</span>
+                            <span class="nav-label">Grading</span>
+                        </div>
+                        <div class="nav-item" onclick="selectNav(this)">
+                            <span class="nav-icon">📦</span>
+                            <span class="nav-label">Collection</span>
+                        </div>
+                        <div class="nav-item" onclick="selectNav(this)">
+                            <span class="nav-icon">💰</span>
+                            <span class="nav-label">Pricing</span>
+                        </div>
+                        <div class="nav-item" onclick="selectNav(this)">
+                            <span class="nav-icon">📸</span>
+                            <span class="nav-label">Camera</span>
+                        </div>
+                        <div class="nav-item" onclick="selectNav(this)">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-label">Settings</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="panel stats-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">⚡</span>
+                        <span class="panel-title">Quick Stats</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-total">0</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-today">0</div>
+                                <div class="stat-label">Today</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-grade">0.0</div>
+                                <div class="stat-label">Avg Grade</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-queue">0</div>
+                                <div class="stat-label">Queue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Providers -->
+                <div class="panel providers-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">🤖</span>
+                        <span class="panel-title">AI Providers</span>
+                    </div>
+                    <div class="panel-content">
+                        <span class="provider-badge active">Claude</span>
+                        <span class="provider-badge active">Gemini</span>
+                        <span class="provider-badge active">GPT-4</span>
+                        <span class="provider-badge">Groq</span>
+                        <span class="provider-badge">DeepSeek</span>
+                        <span class="provider-badge">Ollama</span>
+                        <span class="provider-badge">Grok</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Content -->
+            <div class="center-content">
+                <!-- Hero Stats -->
+                <div class="panel hero-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📈</span>
+                        <span class="panel-title">Performance Overview</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <div class="hero-value" id="hero-graded">247</div>
+                                <div class="hero-label">Items Graded</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-value" id="hero-value">$12.4K</div>
+                                <div class="hero-label">Total Value</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-value" id="hero-accuracy">94%</div>
+                                <div class="hero-label">AI Accuracy</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-value" id="hero-speed">2.3s</div>
+                                <div class="hero-label">Avg Speed</div>
+                            </div>
+                        </div>
+                        <div class="viz-container">
+                            <canvas id="wave-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="panel activity-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">📋</span>
+                        <span class="panel-title">Recent Activity</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="activity-list" id="activity-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <!-- System Monitor -->
+                <div class="panel system-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">💻</span>
+                        <span class="panel-title">System Monitor</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="meter-container">
+                            <div class="meter-header">
+                                <span class="meter-label">CPU Usage</span>
+                                <span class="meter-value" id="cpu-value">0%</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill cpu" id="cpu-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="meter-container">
+                            <div class="meter-header">
+                                <span class="meter-label">Memory</span>
+                                <span class="meter-value" id="mem-value">0 / 0 GB</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill memory" id="mem-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="meter-container">
+                            <div class="meter-header">
+                                <span class="meter-label">Backend Status</span>
+                                <span class="meter-value" id="backend-status">Checking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="panel actions-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">⚡</span>
+                        <span class="panel-title">Quick Actions</span>
+                    </div>
+                    <div class="panel-content">
+                        <button class="action-btn" onclick="startGrading()">
+                            <span class="action-icon">🎯</span>
+                            Start Grading
+                        </button>
+                        <button class="action-btn" onclick="openCamera()">
+                            <span class="action-icon">📸</span>
+                            Open Camera
+                        </button>
+                        <button class="action-btn" onclick="openAPI()">
+                            <span class="action-icon">📡</span>
+                            API Docs
+                        </button>
+                        <button class="action-btn" onclick="exportData()">
+                            <span class="action-icon">📤</span>
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Console -->
+                <div class="panel console-panel">
+                    <div class="panel-header">
+                        <span class="panel-icon">⌨️</span>
+                        <span class="panel-title">Console</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="console" id="console"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

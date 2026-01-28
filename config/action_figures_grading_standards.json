@@ -1,0 +1,123 @@
+{
+    "afa_scale": {
+        "archival_grades": {
+            "100": {"label": "Uncirculated - Flawless", "description": "Factory sealed in archival case. Perfect in every way.", "minimum_C": 95, "minimum_B": 95, "minimum_F": 95},
+            "95": {"label": "Uncirculated - Mint", "description": "Factory sealed, nearly flawless condition.", "minimum_C": 90, "minimum_B": 90, "minimum_F": 90},
+            "90": {"label": "Uncirculated - Near Mint/Mint", "description": "Factory sealed with very minor imperfections.", "minimum_C": 85, "minimum_B": 85, "minimum_F": 85},
+            "85": {"label": "Archival - Near Mint+", "description": "Factory sealed, minor card/bubble imperfections.", "minimum_C": 80, "minimum_B": 80, "minimum_F": 80},
+            "80": {"label": "Archival - Near Mint", "description": "Factory sealed, noticeable minor flaws.", "minimum_C": 75, "minimum_B": 75, "minimum_F": 75}
+        },
+        "standard_grades": {
+            "85": {"label": "Near Mint+", "description": "Excellent condition with very minor flaws."},
+            "80": {"label": "Near Mint", "description": "Great condition with minor imperfections."},
+            "75": {"label": "Excellent+/Near Mint-", "description": "Very good condition with noticeable minor flaws."},
+            "70": {"label": "Excellent+", "description": "Good condition with moderate wear."},
+            "60": {"label": "Excellent", "description": "Shows wear but still displays well."},
+            "50": {"label": "Very Good", "description": "Significant wear, still collectible."},
+            "40": {"label": "Good", "description": "Heavy wear, may have damage."},
+            "30": {"label": "Fair", "description": "Major defects, poor condition."},
+            "20": {"label": "Poor", "description": "Severe damage, barely acceptable for collection."}
+        }
+    },
+    "subgrade_categories": {
+        "C": {
+            "name": "Card/Packaging",
+            "weight": 0.40,
+            "criteria": {
+                "bends": {"none": 0, "minor": -5, "moderate": -15, "major": -25},
+                "creases": {"none": 0, "light": -5, "moderate": -15, "heavy": -25},
+                "yellowing": {"none": 0, "slight": -5, "moderate": -10, "heavy": -20},
+                "j_hook_condition": {"perfect": 0, "minor_bend": -5, "moderate_bend": -10, "torn": -20},
+                "corners": {"sharp": 0, "slight_wear": -5, "moderate_wear": -10, "rounded": -15},
+                "punch_integrity": {"perfect": 0, "stressed": -5, "torn": -15},
+                "edge_wear": {"none": 0, "minor": -5, "moderate": -10, "heavy": -20}
+            }
+        },
+        "B": {
+            "name": "Blister/Bubble",
+            "weight": 0.30,
+            "criteria": {
+                "clarity": {"crystal_clear": 0, "slight_haze": -5, "yellowed": -15, "cloudy": -25},
+                "dents": {"none": 0, "minor": -10, "moderate": -20, "major": -30},
+                "cracks": {"none": 0, "hairline": -15, "visible": -30, "major": -50},
+                "attachment": {"factory_sealed": 0, "loose_corner": -10, "detaching": -25, "resealed": -50},
+                "crushing": {"none": 0, "slight": -10, "moderate": -25, "severe": -40}
+            }
+        },
+        "F": {
+            "name": "Figure",
+            "weight": 0.30,
+            "criteria": {
+                "paint_application": {"perfect": 0, "minor_flaws": -5, "moderate_flaws": -15, "major_flaws": -25},
+                "factory_defects": {"none": 0, "minor": -5, "moderate": -15, "major": -25},
+                "accessories": {"complete": 0, "minor_issue": -10, "missing_small": -20, "missing_major": -40},
+                "position_in_bubble": {"centered": 0, "slightly_shifted": -5, "noticeably_shifted": -10},
+                "joint_tightness": {"tight": 0, "slightly_loose": -5, "loose": -15}
+            }
+        }
+    },
+    "figure_lines": {
+        "vintage": {
+            "star_wars": {
+                "kenner_1977_1985": {"premium": "highest", "12_back": "+200-500%", "21_back": "+100-200%"},
+                "droids_ewoks": {"premium": "high", "note": "Shorter production run"},
+                "power_of_the_force": {"premium": "medium to high", "coins": "add 20-50%"}
+            },
+            "gi_joe": {
+                "arah_1982_1994": {"premium": "high", "straight_arm": "+50-100%"},
+                "super7": {"modern_vintage_style": true}
+            },
+            "transformers": {
+                "g1_1984_1990": {"premium": "highest", "complete": "critical"},
+                "beast_wars": {"premium": "moderate"}
+            },
+            "masters_of_the_universe": {
+                "original_1982_1988": {"premium": "high"}
+            }
+        },
+        "modern": {
+            "marvel_legends": {"premium": "varies by figure"},
+            "star_wars_black_series": {"premium": "moderate"},
+            "mcfarlane": {"premium": "varies"},
+            "neca": {"premium": "varies by license"},
+            "hasbro": {"premium": "varies"}
+        }
+    },
+    "defect_types": {
+        "card": {
+            "corner_ding": {"trace": -2, "minor": -5, "moderate": -10, "major": -15, "severe": -25},
+            "edge_wear": {"trace": -2, "minor": -5, "moderate": -10, "major": -15},
+            "crease": {"minor": -5, "moderate": -15, "major": -25, "severe": -35},
+            "yellowing": {"slight": -5, "moderate": -15, "heavy": -25},
+            "sticker_residue": {"minor": -5, "moderate": -10, "major": -20},
+            "price_sticker": {"present": -5, "removed_clean": -2, "removed_damage": -15},
+            "tear": {"minor": -15, "moderate": -25, "major": -40}
+        },
+        "bubble": {
+            "dent": {"minor": -5, "moderate": -15, "major": -25},
+            "crack": {"hairline": -10, "visible": -25, "major": -40},
+            "yellowing": {"slight": -5, "moderate": -15, "heavy": -25},
+            "crushing": {"minor": -10, "moderate": -20, "major": -35},
+            "detachment": {"corner": -10, "side": -20, "major": -40}
+        },
+        "figure": {
+            "paint_wear": {"minor": -5, "moderate": -15, "major": -25},
+            "missing_accessory": {"minor": -15, "major": -30},
+            "broken_part": {"minor": -20, "major": -40},
+            "discoloration": {"slight": -10, "moderate": -20, "heavy": -35}
+        }
+    },
+    "special_designations": {
+        "proof_card": {"description": "Pre-production sample card", "premium": "+100-500%"},
+        "first_shot": {"description": "Pre-production figure sample", "premium": "+200-1000%"},
+        "unproduced": {"description": "Never mass-produced item", "premium": "varies greatly"},
+        "variant": {"description": "Production variation", "premium": "+10-500% depending on rarity"},
+        "foreign": {"description": "Non-US release", "premium": "varies by country and rarity"}
+    },
+    "condition_modifiers": {
+        "factory_sealed": {"bonus": "+10%", "description": "Original factory tape/seal intact"},
+        "unpunched": {"bonus": "+5-15%", "description": "Hang hole never punched"},
+        "canadian_card": {"note": "Bilingual text, may affect US collector demand"},
+        "transitional": {"note": "Card back change during production run"}
+    }
+}

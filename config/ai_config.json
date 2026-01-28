@@ -1,0 +1,81 @@
+{
+    "anthropic": {
+        "api_key": "",
+        "model": "claude-sonnet-4-20250514",
+        "max_tokens": 2048,
+        "temperature": 0.1,
+        "enabled": true,
+        "weight": 0.35,
+        "timeout_seconds": 30
+    },
+    "google": {
+        "api_key": "",
+        "model": "gemini-1.5-flash",
+        "max_tokens": 1024,
+        "temperature": 0.1,
+        "enabled": true,
+        "weight": 0.25,
+        "timeout_seconds": 30
+    },
+    "openrouter": {
+        "api_key": "",
+        "models": [
+            "qwen/qwen-2.5-vl-72b-instruct:free",
+            "meta-llama/llama-4-maverick:free",
+            "google/gemini-2.0-flash-exp:free",
+            "mistralai/pixtral-12b:free"
+        ],
+        "enabled": true,
+        "weight": 0.20,
+        "timeout_seconds": 60
+    },
+    "huggingface": {
+        "api_key": "",
+        "models": [
+            "llava-hf/llava-1.5-7b-hf",
+            "Salesforce/blip2-opt-2.7b"
+        ],
+        "enabled": true,
+        "weight": 0.15,
+        "timeout_seconds": 60,
+        "use_local_fallback": true
+    },
+    "local_llm": {
+        "ollama_url": "http://localhost:11434",
+        "lmstudio_url": "http://localhost:1234",
+        "preferred_models": ["llava:13b", "llava:7b", "bakllava"],
+        "enabled": true,
+        "weight": 0.05,
+        "timeout_seconds": 120
+    },
+    "gocollect": {
+        "api_key": "",
+        "enabled": true
+    },
+    "heritage": {
+        "api_key": "",
+        "enabled": true
+    },
+    "ebay": {
+        "client_id": "",
+        "client_secret": "",
+        "api_token": "",
+        "enabled": true
+    },
+    "consensus": {
+        "min_providers": 3,
+        "agreement_threshold": 0.85,
+        "confidence_threshold": 0.80,
+        "defect_confirmation_count": 2,
+        "front_weight": 0.70,
+        "back_weight": 0.30
+    },
+    "image_processing": {
+        "quality_threshold": 0.85,
+        "target_resolution": [1920, 2560],
+        "jpeg_quality": 95,
+        "auto_enhance": true,
+        "denoise": true,
+        "sharpen": true
+    }
+}

@@ -1,0 +1,148 @@
+{
+    "wata_scale": {
+        "seal_grades": {
+            "A++": {"label": "Exceptional", "description": "Factory seal in exceptional condition. No visible flaws under close inspection."},
+            "A+": {"label": "Excellent", "description": "Factory seal in excellent condition with minimal imperfections."},
+            "A": {"label": "Very Good", "description": "Factory seal intact with minor visible imperfections."},
+            "B+": {"label": "Good Plus", "description": "Factory seal with moderate imperfections but still intact."},
+            "B": {"label": "Good", "description": "Factory seal with noticeable wear but still sealed."},
+            "C+": {"label": "Fair Plus", "description": "Factory seal compromised but game never accessed."},
+            "C": {"label": "Fair", "description": "Seal severely compromised or partially open."},
+            "NS": {"label": "No Seal", "description": "Game was never sealed or seal completely removed."}
+        },
+        "box_grades": {
+            "10": {"label": "Gem Mint", "description": "Perfect box condition. Factory fresh appearance."},
+            "9.8": {"label": "Near Mint/Mint", "description": "Nearly perfect with only microscopic flaws."},
+            "9.6": {"label": "Near Mint+", "description": "Excellent condition with very minor flaws."},
+            "9.4": {"label": "Near Mint", "description": "Great condition with minor imperfections."},
+            "9.2": {"label": "Near Mint-", "description": "Very good condition with noticeable minor flaws."},
+            "9.0": {"label": "Very Fine/Near Mint", "description": "Good condition with moderate minor flaws."},
+            "8.5": {"label": "Very Fine+", "description": "Shows some wear but presents well."},
+            "8.0": {"label": "Very Fine", "description": "Moderate wear visible."},
+            "7.5": {"label": "Very Fine-", "description": "Noticeable wear and minor damage."},
+            "7.0": {"label": "Fine/Very Fine", "description": "Significant wear."},
+            "6.5": {"label": "Fine+", "description": "Heavy wear but structurally sound."},
+            "6.0": {"label": "Fine", "description": "Heavy wear with some damage."},
+            "5.0": {"label": "Very Good/Fine", "description": "Major wear and moderate damage."},
+            "4.0": {"label": "Very Good", "description": "Heavy wear and damage."},
+            "3.0": {"label": "Good/Very Good", "description": "Severe wear and damage."},
+            "2.0": {"label": "Good", "description": "Barely acceptable condition."},
+            "1.0": {"label": "Fair/Poor", "description": "Extremely poor condition."}
+        }
+    },
+    "vga_scale": {
+        "gold_grades": {
+            "100": {"label": "Uncirculated - Perfect", "description": "Absolute perfection. Never seen outside factory."},
+            "95": {"label": "Uncirculated - Mint+", "description": "Factory sealed, virtually flawless."},
+            "90": {"label": "Uncirculated - Mint", "description": "Factory sealed, near perfect."},
+            "85": {"label": "Uncirculated - Near Mint+", "description": "Factory sealed, excellent condition."},
+            "80": {"label": "Uncirculated - Near Mint", "description": "Factory sealed, great condition."},
+            "75": {"label": "Uncirculated - Excellent+", "description": "Factory sealed, very good condition."}
+        },
+        "silver_grades": {
+            "85": {"label": "Near Mint+", "description": "Opened but excellent condition."},
+            "80": {"label": "Near Mint", "description": "Opened, great condition."},
+            "75": {"label": "Excellent+", "description": "Light wear visible."},
+            "70": {"label": "Excellent", "description": "Moderate wear."},
+            "60": {"label": "Very Good", "description": "Significant wear."},
+            "50": {"label": "Good", "description": "Heavy wear."}
+        }
+    },
+    "grading_criteria": {
+        "box": {
+            "weight": 0.50,
+            "criteria": {
+                "corners": {"sharp": 0, "minor_wear": -2, "moderate_wear": -5, "crushed": -10, "damaged": -20},
+                "edges": {"perfect": 0, "minor_wear": -2, "moderate_wear": -5, "tears": -15},
+                "surface": {"pristine": 0, "minor_scuffs": -2, "scratches": -5, "stains": -10, "writing": -15},
+                "flap_integrity": {"perfect": 0, "minor_wear": -3, "moderate_wear": -8, "torn": -20},
+                "structural": {"solid": 0, "soft_corners": -5, "crushing": -10, "collapse": -25}
+            }
+        },
+        "seal": {
+            "weight": 0.30,
+            "criteria": {
+                "h_seam": {"factory_perfect": 0, "minor_wear": -5, "lifting": -15, "broken": -30},
+                "y_fold": {"crisp": 0, "softened": -3, "damaged": -10},
+                "shrink_wrap": {"tight": 0, "loose": -5, "torn": -20, "rewrapped": -100},
+                "sticker_seal": {"intact": 0, "partially_broken": -10, "broken": -25}
+            }
+        },
+        "contents": {
+            "weight": 0.20,
+            "criteria": {
+                "manual": {"pristine": 0, "minor_wear": -2, "moderate_wear": -5, "damaged": -10, "missing": -25},
+                "cartridge_disc": {"perfect": 0, "minor_scratches": -3, "moderate_scratches": -8, "damaged": -20},
+                "inserts": {"complete": 0, "minor_wear": -2, "missing_minor": -10, "missing_major": -25},
+                "registration_card": {"present": 0, "filled_out": -5, "missing": -10}
+            }
+        }
+    },
+    "platform_types": {
+        "nintendo": {
+            "nes": {"seal_type": "H-seam", "box_type": "Hang tab", "premium_era": true},
+            "snes": {"seal_type": "H-seam", "box_type": "Standard", "premium_era": true},
+            "n64": {"seal_type": "H-seam or Y-fold", "box_type": "Standard"},
+            "gamecube": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "wii": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "switch": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "gameboy": {"seal_type": "H-seam", "box_type": "Standard", "premium_era": true},
+            "gba": {"seal_type": "H-seam", "box_type": "Standard"},
+            "ds": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "3ds": {"seal_type": "Y-fold", "box_type": "Standard"}
+        },
+        "sega": {
+            "master_system": {"seal_type": "Shrink wrap", "box_type": "Standard", "premium_era": true},
+            "genesis": {"seal_type": "Shrink wrap", "box_type": "Clamshell or Standard"},
+            "saturn": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "dreamcast": {"seal_type": "Y-fold", "box_type": "Standard"},
+            "game_gear": {"seal_type": "Shrink wrap", "box_type": "Standard"}
+        },
+        "sony": {
+            "ps1": {"seal_type": "Y-fold", "box_type": "Jewel case"},
+            "ps2": {"seal_type": "Y-fold", "box_type": "Standard DVD case"},
+            "ps3": {"seal_type": "Y-fold", "box_type": "Blu-ray case"},
+            "ps4": {"seal_type": "Y-fold", "box_type": "Blu-ray case"},
+            "ps5": {"seal_type": "Y-fold", "box_type": "Blu-ray case"},
+            "psp": {"seal_type": "Y-fold", "box_type": "UMD case"},
+            "vita": {"seal_type": "Y-fold", "box_type": "Standard"}
+        },
+        "microsoft": {
+            "xbox": {"seal_type": "Y-fold", "box_type": "Standard DVD case"},
+            "xbox_360": {"seal_type": "Y-fold", "box_type": "Standard DVD case"},
+            "xbox_one": {"seal_type": "Y-fold", "box_type": "Blu-ray case"},
+            "xbox_series": {"seal_type": "Y-fold", "box_type": "Blu-ray case"}
+        },
+        "atari": {
+            "2600": {"seal_type": "Various", "box_type": "Various", "premium_era": true},
+            "5200": {"seal_type": "Shrink wrap", "box_type": "Standard"},
+            "7800": {"seal_type": "Shrink wrap", "box_type": "Standard"},
+            "jaguar": {"seal_type": "Shrink wrap", "box_type": "Standard"}
+        }
+    },
+    "special_variants": {
+        "first_print": {"description": "First production run", "premium": "+20-100%"},
+        "players_choice": {"description": "Budget rerelease", "premium": "-10-30%"},
+        "greatest_hits": {"description": "Budget rerelease (Sony)", "premium": "-10-30%"},
+        "platinum_hits": {"description": "Budget rerelease (Xbox)", "premium": "-10-30%"},
+        "limited_edition": {"description": "Special edition release", "premium": "+50-500%"},
+        "not_for_resale": {"description": "Demo or promo copy", "premium": "+25-200%"},
+        "test_market": {"description": "Limited regional release", "premium": "+100-1000%"}
+    },
+    "defect_types": {
+        "box": {
+            "corner_crush": {"minor": -3, "moderate": -8, "major": -15, "severe": -25},
+            "crease": {"minor": -2, "moderate": -5, "major": -12, "severe": -20},
+            "tear": {"small": -5, "moderate": -15, "large": -30},
+            "sun_fading": {"light": -3, "moderate": -8, "heavy": -15},
+            "water_damage": {"minor": -10, "moderate": -25, "major": -50},
+            "price_sticker": {"removable": -2, "residue": -5, "permanent": -10},
+            "writing": {"pencil": -5, "pen": -10, "marker": -20}
+        },
+        "seal": {
+            "tear": {"small": -10, "moderate": -25, "large": -50},
+            "rewrap": {"suspected": -30, "confirmed": -100},
+            "sticker_damage": {"minor": -5, "moderate": -15, "missing": -30}
+        }
+    }
+}

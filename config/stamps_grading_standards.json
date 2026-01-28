@@ -1,0 +1,217 @@
+{
+    "philatelic_scale": {
+        "grades": {
+            "superb": {
+                "numeric": 98,
+                "label": "Superb",
+                "description": "An exceptional stamp in every respect. Extremely wide margins, perfectly centered, vibrant color, fresh gum, and outstanding overall quality.",
+                "centering": "virtually perfect"
+            },
+            "extremely_fine": {
+                "numeric": 95,
+                "label": "Extremely Fine (XF)",
+                "description": "A stamp that is exceptionally well-centered, with margins that are larger than normal. Fresh color and original gum (if applicable).",
+                "centering": "within 5% of perfect"
+            },
+            "very_fine": {
+                "numeric": 85,
+                "label": "Very Fine (VF)",
+                "description": "A stamp with good centering, full perforations, and attractive color. The standard for quality stamps.",
+                "centering": "within 10% of perfect"
+            },
+            "fine_very_fine": {
+                "numeric": 80,
+                "label": "Fine-Very Fine (F-VF)",
+                "description": "Better than average centering. Design may be slightly closer to one edge.",
+                "centering": "design clear of perforations"
+            },
+            "fine": {
+                "numeric": 70,
+                "label": "Fine (F)",
+                "description": "Design is noticeably off-center but design clears the perforations. Average condition.",
+                "centering": "design touches perforations on one side"
+            },
+            "very_good": {
+                "numeric": 60,
+                "label": "Very Good (VG)",
+                "description": "Design is off-center and may touch perforations on one or two sides.",
+                "centering": "design just clears perforations"
+            },
+            "good": {
+                "numeric": 50,
+                "label": "Good (G)",
+                "description": "Design may be cut into slightly by perforations. Acceptable for filling spaces.",
+                "centering": "design cut by perforations"
+            },
+            "average": {
+                "numeric": 40,
+                "label": "Average (AVG)",
+                "description": "Poor centering with design cut into by perforations. Space filler only.",
+                "centering": "heavily cut by perforations"
+            }
+        }
+    },
+    "gum_condition": {
+        "mint_never_hinged": {
+            "abbreviation": "MNH",
+            "label": "Mint Never Hinged",
+            "description": "Original gum with no trace of a hinge mark or disturbance. Full pristine gum.",
+            "premium": "+25-100%"
+        },
+        "original_gum": {
+            "abbreviation": "OG",
+            "label": "Original Gum",
+            "description": "Original gum that may have a hinge remnant or small disturbed area."
+        },
+        "lightly_hinged": {
+            "abbreviation": "LH",
+            "label": "Lightly Hinged",
+            "description": "Original gum with slight disturbance from a removed hinge. Minimal remnant.",
+            "discount": "-10-20%"
+        },
+        "hinged": {
+            "abbreviation": "H",
+            "label": "Hinged",
+            "description": "Original gum with visible hinge remnant or area of disturbance.",
+            "discount": "-20-40%"
+        },
+        "heavily_hinged": {
+            "abbreviation": "HH",
+            "label": "Heavily Hinged",
+            "description": "Original gum with large hinge remnant or significant disturbance.",
+            "discount": "-40-60%"
+        },
+        "regummed": {
+            "abbreviation": "RG",
+            "label": "Regummed",
+            "description": "Original gum has been replaced with new gum.",
+            "discount": "-50-80%",
+            "note": "Should be disclosed"
+        },
+        "no_gum": {
+            "abbreviation": "NG",
+            "label": "No Gum",
+            "description": "Gum completely removed or never present (for unused stamps).",
+            "discount": "-60-90%"
+        },
+        "disturbed_gum": {
+            "abbreviation": "DG",
+            "label": "Disturbed Gum",
+            "description": "Original gum with significant disturbance, cracks, or discoloration.",
+            "discount": "-30-50%"
+        }
+    },
+    "perforation_grades": {
+        "perfect": {
+            "description": "All perforations intact and evenly separated",
+            "penalty": 0
+        },
+        "minor_perf_fault": {
+            "description": "One or two short or missing perfs, or slight nibbed perfs",
+            "penalty": -10
+        },
+        "moderate_perf_fault": {
+            "description": "Several short or missing perfs",
+            "penalty": -25
+        },
+        "major_perf_fault": {
+            "description": "Many missing perfs or pulled perfs",
+            "penalty": -50
+        },
+        "straight_edge": {
+            "description": "One or more sides without perforations (sheet margin)",
+            "penalty": -30,
+            "note": "Natural for some positions"
+        }
+    },
+    "cancel_grades": {
+        "superb": {
+            "description": "Light, clear cancel that doesn't obscure design. Well-struck.",
+            "premium": "+10-25%"
+        },
+        "very_fine": {
+            "description": "Light cancel, may slightly touch design.",
+            "premium": 0
+        },
+        "fine": {
+            "description": "Moderate cancel, partially on design.",
+            "discount": 0
+        },
+        "heavy": {
+            "description": "Heavy cancel covering much of design.",
+            "discount": "-20-40%"
+        },
+        "socked_on_nose": {
+            "description": "Cancel perfectly centered on stamp design.",
+            "note": "May be premium for certain cancels",
+            "premium": "varies"
+        },
+        "manuscript": {
+            "description": "Hand-written pen cancel.",
+            "discount": "-30-60%"
+        }
+    },
+    "defect_types": {
+        "centering": {
+            "slightly_off": {"penalty": -5, "description": "Marginally off-center"},
+            "off_center": {"penalty": -15, "description": "Noticeably off-center"},
+            "heavily_off_center": {"penalty": -30, "description": "Design cut by perforations"}
+        },
+        "tears": {
+            "pin_hole_tear": {"penalty": -20, "description": "Tiny tear visible under magnification"},
+            "small_tear": {"penalty": -40, "description": "Tear visible but doesn't affect design"},
+            "major_tear": {"penalty": -70, "description": "Significant tear affecting appearance"}
+        },
+        "thins": {
+            "small_thin": {"penalty": -25, "description": "Small thinned area on back"},
+            "large_thin": {"penalty": -50, "description": "Large thinned area"}
+        },
+        "creases": {
+            "light_crease": {"penalty": -15, "description": "Barely visible crease"},
+            "moderate_crease": {"penalty": -35, "description": "Visible crease"},
+            "heavy_crease": {"penalty": -60, "description": "Major crease affecting appearance"}
+        },
+        "stains": {
+            "small_stain": {"penalty": -20, "description": "Small stain or foxing"},
+            "moderate_stain": {"penalty": -40, "description": "Noticeable staining"},
+            "heavy_stain": {"penalty": -70, "description": "Major staining"}
+        },
+        "color": {
+            "slightly_faded": {"penalty": -10, "description": "Minor color fading"},
+            "faded": {"penalty": -30, "description": "Noticeable fading"},
+            "heavily_faded": {"penalty": -50, "description": "Significant color loss"},
+            "oxidized": {"penalty": -35, "description": "Color changed due to oxidation"}
+        },
+        "gum_issues": {
+            "gum_bend": {"penalty": -10, "description": "Bend in gum only"},
+            "gum_crease": {"penalty": -20, "description": "Crease visible in gum"},
+            "gum_loss": {"penalty": -30, "description": "Partial gum missing"}
+        }
+    },
+    "special_attributes": {
+        "plate_number": {"description": "Shows plate number in margin", "premium": "+10-50%"},
+        "plate_block": {"description": "Block with plate number", "premium": "+25-200%"},
+        "line_pair": {"description": "Coil pair with line between", "premium": "+50-500%"},
+        "gutter_pair": {"description": "Pair with gutter between", "premium": "+25-100%"},
+        "imperf": {"description": "Imperforate variety", "premium": "varies greatly"},
+        "inverted_center": {"description": "Center design inverted", "premium": "+1000%+"},
+        "color_error": {"description": "Wrong color or missing color", "premium": "varies greatly"},
+        "double_print": {"description": "Design printed twice", "premium": "+100-500%"}
+    },
+    "watermark_importance": {
+        "present": {"description": "Watermark matches catalog description"},
+        "inverted": {"description": "Watermark inverted", "note": "May be premium"},
+        "reversed": {"description": "Watermark reversed", "note": "May be premium"},
+        "missing": {"description": "Expected watermark not present", "note": "May indicate variety or fake"}
+    },
+    "stamp_types": {
+        "definitive": {"description": "Regular issue stamps for everyday use"},
+        "commemorative": {"description": "Special issue stamps marking events"},
+        "airmail": {"description": "Stamps for airmail service"},
+        "semi_postal": {"description": "Stamps with surcharge for charity"},
+        "postage_due": {"description": "Stamps for unpaid postage"},
+        "revenue": {"description": "Tax and fiscal stamps"},
+        "official": {"description": "Government official mail stamps"},
+        "newspaper": {"description": "Stamps for newspaper mailing"}
+    }
+}

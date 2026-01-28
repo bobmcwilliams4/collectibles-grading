@@ -1,0 +1,7 @@
+.vercel
+.env*.local
+
+# Large binary files - host on GitHub releases
+public/downloads/*.exe
+public/downloads/*.dmg
+public/downloads/*.AppImage

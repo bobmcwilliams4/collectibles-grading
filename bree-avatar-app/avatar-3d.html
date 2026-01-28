@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bree Avatar - 3D</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+            -webkit-app-region: drag;
+        }
+        #avatar-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        #avatar-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .ui-overlay {
+            position: absolute;
+            z-index: 100;
+            pointer-events: none;
+            -webkit-app-region: no-drag;
+        }
+        .name-plate {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 6px;
+            color: #c77dff;
+            text-shadow: 0 0 15px #9d00ff, 0 0 30px #ff6b00;
+            padding: 8px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(157, 0, 255, 0.5);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .style-indicator {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #ff6b00;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 107, 0, 0.5);
+            border-radius: 12px;
+            padding: 5px 12px;
+        }
+        .emotion-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #00ffff;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 5px 12px;
+        }
+        .speaking-indicator {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .speaking-indicator.active { opacity: 1; }
+        .wave-bar {
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(to top, #9d00ff, #ff6b00);
+            border-radius: 2px;
+            animation: wave 0.5s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 80, 80, 0.7);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: auto;
+            -webkit-app-region: no-drag;
+        }
+        #avatar-container:hover .close-btn { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div id="avatar-container">
+        <canvas id="avatar-canvas"></canvas>
+        <div class="ui-overlay">
+            <span class="style-indicator" id="styleIndicator">HOLOGRAPHIC</span>
+            <span class="emotion-indicator" id="emotionIndicator">NEUTRAL</span>
+            <div class="speaking-indicator" id="speakingIndicator">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+            <div class="name-plate">B R E E</div>
+            <button class="close-btn" onclick="closeAvatar()"></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        // ═══════════════════════════════════════════════════════════════════════
+        //   PROFESSIONAL 3D AVATAR RENDERER - Three.js with PBR & Post-Processing
+        // ═══════════════════════════════════════════════════════════════════════
+
+        class Bree3DAvatar {
+            constructor(container) {
+                this.container = container;
+                this.canvas = document.getElementById('avatar-canvas');
+
+                // State
+                this.style = 'holographic';
+                this.emotion = 'NEUTRAL';
+                this.isSpeaking = false;
+                this.time = 0;
+
+                // Animation state
+                this.blinkTimer = 0;
+                this.blinkState = 0;
+                this.nextBlink = 2 + Math.random() * 3;
+                this.breathPhase = 0;
+                this.headTilt = 0;
+                this.headTiltTarget = 0;
+                this.eyeLookX = 0;
+                this.eyeLookY = 0;
+                this.mouthOpenness = 0;
+
+                // Emotion parameters
+                this.emotions = {
+                    ECSTATIC: { eyeScale: 1.3, browOffset: -0.15, mouthCurve: 0.8, blush: 0.6 },
+                    IMPRESSED: { eyeScale: 1.15, browOffset: -0.08, mouthCurve: 0.5, blush: 0.3 },
+                    PLEASED: { eyeScale: 1.05, browOffset: -0.04, mouthCurve: 0.3, blush: 0.15 },
+                    NEUTRAL: { eyeScale: 1.0, browOffset: 0, mouthCurve: 0, blush: 0 },
+                    ANNOYED: { eyeScale: 0.9, browOffset: 0.06, mouthCurve: -0.2, blush: 0 },
+                    PISSED: { eyeScale: 0.85, browOffset: 0.1, mouthCurve: -0.4, blush: 0.1 },
+                    FURIOUS: { eyeScale: 0.8, browOffset: 0.15, mouthCurve: -0.6, blush: 0.2 },
+                    NUCLEAR: { eyeScale: 0.75, browOffset: 0.2, mouthCurve: -0.8, blush: 0.35 }
+                };
+                this.currentEmotionParams = this.emotions.NEUTRAL;
+
+                this.init();
+                this.createLights();
+                this.createAvatar();
+                this.createEffects();
+                this.startIdleAnimations();
+                this.animate();
+            }
+
+            init() {
+                // Scene
+                this.scene = new THREE.Scene();
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(35, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+                this.camera.position.set(0, 0.2, 2.5);
+                this.camera.lookAt(0, 0, 0);
+
+                // Renderer with transparency and antialiasing
+                this.renderer = new THREE.WebGLRenderer({
+                    canvas: this.canvas,
+                    alpha: true,
+                    antialias: true,
+                    powerPreference: 'high-performance'
+                });
+                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.2;
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // Handle resize
+                window.addEventListener('resize', () => this.onResize());
+            }
+
+            createLights() {
+                // Ambient light
+                const ambient = new THREE.AmbientLight(0x404050, 0.5);
+                this.scene.add(ambient);
+
+                // Key light (main purple)
+                this.keyLight = new THREE.SpotLight(0x9d00ff, 2, 10, Math.PI / 4, 0.5, 1);
+                this.keyLight.position.set(2, 2, 3);
+                this.keyLight.castShadow = true;
+                this.keyLight.shadow.mapSize.width = 1024;
+                this.keyLight.shadow.mapSize.height = 1024;
+                this.scene.add(this.keyLight);
+
+                // Fill light (orange accent)
+                this.fillLight = new THREE.SpotLight(0xff6b00, 1.5, 10, Math.PI / 4, 0.5, 1);
+                this.fillLight.position.set(-2, 1, 2);
+                this.scene.add(this.fillLight);
+
+                // Rim light (cyan backlight)
+                this.rimLight = new THREE.SpotLight(0x00ffff, 1, 8, Math.PI / 3, 0.3, 1);
+                this.rimLight.position.set(0, 1, -2);
+                this.scene.add(this.rimLight);
+
+                // Bottom glow
+                const bottomLight = new THREE.PointLight(0x9d00ff, 0.5, 3);
+                bottomLight.position.set(0, -1.5, 0);
+                this.scene.add(bottomLight);
+            }
+
+            createAvatar() {
+                this.avatarGroup = new THREE.Group();
+                this.scene.add(this.avatarGroup);
+
+                // Create based on current style
+                this.updateAvatarStyle();
+            }
+
+            updateAvatarStyle() {
+                // Clear existing avatar
+                while (this.avatarGroup.children.length > 0) {
+                    const child = this.avatarGroup.children[0];
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(m => m.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                    this.avatarGroup.remove(child);
+                }
+
+                switch (this.style) {
+                    case 'holographic':
+                        this.createHolographicAvatar();
+                        break;
+                    case 'realistic':
+                        this.createRealisticAvatar();
+                        break;
+                    case 'stylized':
+                        this.createStylizedAvatar();
+                        break;
+                    case 'anime':
+                        this.createAnimeAvatar();
+                        break;
+                }
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            //   STYLE A: HOLOGRAPHIC (Cortana-style)
+            // ═══════════════════════════════════════════════════════════════════
+            createHolographicAvatar() {
+                // Holographic shader material
+                const holoMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        color1: { value: new THREE.Color(0x9d00ff) },
+                        color2: { value: new THREE.Color(0x00ffff) },
+                        scanlineIntensity: { value: 0.3 },
+                        glitchIntensity: { value: 0.05 }
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+                        uniform float time;
+                        uniform float glitchIntensity;
+
+                        void main() {
+                            vUv = uv;
+                            vNormal = normalize(normalMatrix * normal);
+                            vPosition = position;
+
+                            vec3 pos = position;
+                            // Subtle holographic distortion
+                            float glitch = sin(time * 10.0 + position.y * 20.0) * glitchIntensity;
+                            pos.x += glitch * step(0.98, fract(time * 0.5));
+
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform float time;
+                        uniform vec3 color1;
+                        uniform vec3 color2;
+                        uniform float scanlineIntensity;
+
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            // Fresnel effect for edge glow
+                            vec3 viewDir = normalize(cameraPosition - vPosition);
+                            float fresnel = pow(1.0 - max(dot(vNormal, viewDir), 0.0), 3.0);
+
+                            // Scanlines
+                            float scanline = sin(vUv.y * 200.0 + time * 5.0) * 0.5 + 0.5;
+                            scanline = mix(1.0, scanline, scanlineIntensity);
+
+                            // Color gradient
+                            vec3 color = mix(color1, color2, fresnel);
+
+                            // Holographic shimmer
+                            float shimmer = sin(time * 3.0 + vUv.y * 10.0) * 0.1 + 0.9;
+
+                            // Final color with transparency
+                            float alpha = (fresnel * 0.8 + 0.2) * scanline * shimmer;
+                            gl_FragColor = vec4(color * 1.5, alpha * 0.9);
+                        }
+                    `,
+                    transparent: true,
+                    side: THREE.DoubleSide,
+                    depthWrite: false
+                });
+
+                this.holoMaterial = holoMaterial;
+
+                // Head (stylized geometric)
+                const headGeom = new THREE.SphereGeometry(0.35, 64, 64);
+                headGeom.scale(1, 1.15, 0.95);
+                this.head = new THREE.Mesh(headGeom, holoMaterial);
+                this.head.position.y = 0.4;
+                this.avatarGroup.add(this.head);
+
+                // Neck
+                const neckGeom = new THREE.CylinderGeometry(0.08, 0.1, 0.2, 32);
+                const neck = new THREE.Mesh(neckGeom, holoMaterial);
+                neck.position.y = 0.05;
+                this.avatarGroup.add(neck);
+
+                // Shoulders
+                const shoulderGeom = new THREE.CapsuleGeometry(0.08, 0.6, 8, 16);
+                const shoulders = new THREE.Mesh(shoulderGeom, holoMaterial);
+                shoulders.rotation.z = Math.PI / 2;
+                shoulders.position.y = -0.1;
+                this.avatarGroup.add(shoulders);
+
+                // Eyes (glowing orbs)
+                const eyeGeom = new THREE.SphereGeometry(0.05, 32, 32);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.9 });
+
+                this.leftEye = new THREE.Mesh(eyeGeom, eyeMat);
+                this.leftEye.position.set(-0.12, 0.45, 0.28);
+                this.avatarGroup.add(this.leftEye);
+
+                this.rightEye = new THREE.Mesh(eyeGeom, eyeMat.clone());
+                this.rightEye.position.set(0.12, 0.45, 0.28);
+                this.avatarGroup.add(this.rightEye);
+
+                // Mouth (line indicator)
+                const mouthGeom = new THREE.BoxGeometry(0.15, 0.02, 0.02);
+                const mouthMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.7 });
+                this.mouth = new THREE.Mesh(mouthGeom, mouthMat);
+                this.mouth.position.set(0, 0.25, 0.32);
+                this.avatarGroup.add(this.mouth);
+
+                // Data particles
+                this.createHoloParticles();
+
+                // Grid platform
+                this.createHoloGrid();
+            }
+
+            createHoloParticles() {
+                const particleCount = 100;
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+
+                for (let i = 0; i < particleCount; i++) {
+                    const theta = Math.random() * Math.PI * 2;
+                    const r = 0.6 + Math.random() * 0.4;
+                    positions[i * 3] = Math.cos(theta) * r;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 1.5;
+                    positions[i * 3 + 2] = Math.sin(theta) * r;
+
+                    const isPurple = Math.random() > 0.5;
+                    colors[i * 3] = isPurple ? 0.6 : 1.0;
+                    colors[i * 3 + 1] = isPurple ? 0.0 : 0.42;
+                    colors[i * 3 + 2] = isPurple ? 1.0 : 0.0;
+                }
+
+                const particleGeom = new THREE.BufferGeometry();
+                particleGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particleGeom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const particleMat = new THREE.PointsMaterial({
+                    size: 0.03,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.7,
+                    blending: THREE.AdditiveBlending
+                });
+
+                this.particles = new THREE.Points(particleGeom, particleMat);
+                this.avatarGroup.add(this.particles);
+            }
+
+            createHoloGrid() {
+                const gridGeom = new THREE.PlaneGeometry(3, 3, 30, 30);
+                const gridMat = new THREE.ShaderMaterial({
+                    uniforms: {
+                        time: { value: 0 },
+                        color: { value: new THREE.Color(0x9d00ff) }
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform float time;
+                        uniform vec3 color;
+                        varying vec2 vUv;
+
+                        void main() {
+                            vec2 grid = abs(fract(vUv * 20.0 - 0.5) - 0.5) / fwidth(vUv * 20.0);
+                            float line = min(grid.x, grid.y);
+                            float gridAlpha = 1.0 - min(line, 1.0);
+
+                            float dist = length(vUv - 0.5) * 2.0;
+                            float fade = 1.0 - smoothstep(0.3, 1.0, dist);
+
+                            float pulse = sin(time * 2.0 - dist * 5.0) * 0.3 + 0.7;
+
+                            gl_FragColor = vec4(color * pulse, gridAlpha * fade * 0.4);
+                        }
+                    `,
+                    transparent: true,
+                    side: THREE.DoubleSide
+                });
+
+                this.gridMaterial = gridMat;
+                const grid = new THREE.Mesh(gridGeom, gridMat);
+                grid.rotation.x = -Math.PI / 2;
+                grid.position.y = -0.8;
+                this.avatarGroup.add(grid);
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            //   STYLE B: REALISTIC (PBR Materials)
+            // ═══════════════════════════════════════════════════════════════════
+            createRealisticAvatar() {
+                // Skin material with subsurface scattering approximation
+                const skinMaterial = new THREE.MeshPhysicalMaterial({
+                    color: 0xf5d0c5,
+                    roughness: 0.5,
+                    metalness: 0.0,
+                    clearcoat: 0.1,
+                    clearcoatRoughness: 0.8,
+                    sheen: 0.3,
+                    sheenColor: new THREE.Color(0xffcccc),
+                    transmission: 0.1,
+                    thickness: 0.5
+                });
+                this.skinMaterial = skinMaterial;
+
+                // Head
+                const headGeom = new THREE.SphereGeometry(0.35, 64, 64);
+                headGeom.scale(1, 1.2, 0.95);
+                this.head = new THREE.Mesh(headGeom, skinMaterial);
+                this.head.position.y = 0.4;
+                this.head.castShadow = true;
+                this.avatarGroup.add(this.head);
+
+                // Neck
+                const neckGeom = new THREE.CylinderGeometry(0.1, 0.12, 0.25, 32);
+                const neck = new THREE.Mesh(neckGeom, skinMaterial);
+                neck.position.y = 0.02;
+                this.avatarGroup.add(neck);
+
+                // Shoulders/chest hint
+                const shoulderMat = new THREE.MeshPhysicalMaterial({
+                    color: 0x6a0dad,
+                    roughness: 0.3,
+                    metalness: 0.1,
+                    clearcoat: 0.3
+                });
+                const shoulderGeom = new THREE.SphereGeometry(0.4, 32, 32);
+                shoulderGeom.scale(1.5, 0.6, 0.8);
+                const shoulders = new THREE.Mesh(shoulderGeom, shoulderMat);
+                shoulders.position.y = -0.25;
+                this.avatarGroup.add(shoulders);
+
+                // Hair
+                const hairMat = new THREE.MeshPhysicalMaterial({
+                    color: 0x1a0a0a,
+                    roughness: 0.4,
+                    metalness: 0.3,
+                    clearcoat: 0.5
+                });
+                const hairGeom = new THREE.SphereGeometry(0.38, 32, 32);
+                hairGeom.scale(1.05, 1.1, 1.0);
+                const hair = new THREE.Mesh(hairGeom, hairMat);
+                hair.position.set(0, 0.5, -0.05);
+                this.avatarGroup.add(hair);
+
+                // Eyes
+                const eyeWhiteMat = new THREE.MeshPhysicalMaterial({
+                    color: 0xffffff,
+                    roughness: 0.1,
+                    metalness: 0.0,
+                    clearcoat: 1.0
+                });
+                const eyeGeom = new THREE.SphereGeometry(0.045, 32, 32);
+
+                this.leftEye = new THREE.Mesh(eyeGeom, eyeWhiteMat);
+                this.leftEye.position.set(-0.11, 0.45, 0.28);
+                this.avatarGroup.add(this.leftEye);
+
+                this.rightEye = new THREE.Mesh(eyeGeom, eyeWhiteMat);
+                this.rightEye.position.set(0.11, 0.45, 0.28);
+                this.avatarGroup.add(this.rightEye);
+
+                // Irises
+                const irisMat = new THREE.MeshPhysicalMaterial({
+                    color: 0x4a3728,
+                    roughness: 0.2,
+                    metalness: 0.1
+                });
+                const irisGeom = new THREE.SphereGeometry(0.025, 16, 16);
+
+                this.leftIris = new THREE.Mesh(irisGeom, irisMat);
+                this.leftIris.position.set(-0.11, 0.45, 0.315);
+                this.avatarGroup.add(this.leftIris);
+
+                this.rightIris = new THREE.Mesh(irisGeom, irisMat.clone());
+                this.rightIris.position.set(0.11, 0.45, 0.315);
+                this.avatarGroup.add(this.rightIris);
+
+                // Lips
+                const lipMat = new THREE.MeshPhysicalMaterial({
+                    color: 0xcc4466,
+                    roughness: 0.3,
+                    metalness: 0.0,
+                    clearcoat: 0.6
+                });
+                const lipGeom = new THREE.CapsuleGeometry(0.02, 0.1, 8, 16);
+                this.mouth = new THREE.Mesh(lipGeom, lipMat);
+                this.mouth.rotation.z = Math.PI / 2;
+                this.mouth.position.set(0, 0.22, 0.32);
+                this.avatarGroup.add(this.mouth);
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            //   STYLE C: STYLIZED (Pixar/Disney look)
+            // ═══════════════════════════════════════════════════════════════════
+            createStylizedAvatar() {
+                // Toon shader material
+                const toonMaterial = new THREE.MeshToonMaterial({
+                    color: 0xffe4d6,
+                    gradientMap: this.createToonGradient()
+                });
+
+                // Head (larger, more cartoon proportions)
+                const headGeom = new THREE.SphereGeometry(0.4, 64, 64);
+                headGeom.scale(1, 1.1, 0.9);
+                this.head = new THREE.Mesh(headGeom, toonMaterial);
+                this.head.position.y = 0.35;
+                this.avatarGroup.add(this.head);
+
+                // Neck (thinner)
+                const neckMat = toonMaterial.clone();
+                const neckGeom = new THREE.CylinderGeometry(0.08, 0.1, 0.15, 32);
+                const neck = new THREE.Mesh(neckGeom, neckMat);
+                neck.position.y = -0.02;
+                this.avatarGroup.add(neck);
+
+                // Body
+                const bodyMat = new THREE.MeshToonMaterial({
+                    color: 0x9d00ff,
+                    gradientMap: this.createToonGradient()
+                });
+                const bodyGeom = new THREE.SphereGeometry(0.35, 32, 32);
+                bodyGeom.scale(1.2, 0.8, 0.7);
+                const body = new THREE.Mesh(bodyGeom, bodyMat);
+                body.position.y = -0.25;
+                this.avatarGroup.add(body);
+
+                // Hair (stylized)
+                const hairMat = new THREE.MeshToonMaterial({
+                    color: 0x2a1515,
+                    gradientMap: this.createToonGradient()
+                });
+                const hairGeom = new THREE.SphereGeometry(0.42, 32, 32);
+                hairGeom.scale(1.0, 0.9, 0.95);
+                const hair = new THREE.Mesh(hairGeom, hairMat);
+                hair.position.set(0, 0.48, -0.05);
+                this.avatarGroup.add(hair);
+
+                // Big stylized eyes
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const eyeGeom = new THREE.SphereGeometry(0.08, 32, 32);
+
+                this.leftEye = new THREE.Mesh(eyeGeom, eyeMat);
+                this.leftEye.position.set(-0.13, 0.4, 0.3);
+                this.avatarGroup.add(this.leftEye);
+
+                this.rightEye = new THREE.Mesh(eyeGeom, eyeMat);
+                this.rightEye.position.set(0.13, 0.4, 0.3);
+                this.avatarGroup.add(this.rightEye);
+
+                // Irises (larger)
+                const irisMat = new THREE.MeshToonMaterial({
+                    color: 0x6a4a3a,
+                    gradientMap: this.createToonGradient()
+                });
+                const irisGeom = new THREE.SphereGeometry(0.05, 16, 16);
+
+                this.leftIris = new THREE.Mesh(irisGeom, irisMat);
+                this.leftIris.position.set(-0.13, 0.4, 0.37);
+                this.avatarGroup.add(this.leftIris);
+
+                this.rightIris = new THREE.Mesh(irisGeom, irisMat.clone());
+                this.rightIris.position.set(0.13, 0.4, 0.37);
+                this.avatarGroup.add(this.rightIris);
+
+                // Eye highlights
+                const highlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const highlightGeom = new THREE.SphereGeometry(0.02, 16, 16);
+
+                const leftHighlight = new THREE.Mesh(highlightGeom, highlightMat);
+                leftHighlight.position.set(-0.11, 0.42, 0.4);
+                this.avatarGroup.add(leftHighlight);
+
+                const rightHighlight = new THREE.Mesh(highlightGeom, highlightMat);
+                rightHighlight.position.set(0.15, 0.42, 0.4);
+                this.avatarGroup.add(rightHighlight);
+
+                // Mouth
+                const mouthMat = new THREE.MeshToonMaterial({
+                    color: 0xe86b8a,
+                    gradientMap: this.createToonGradient()
+                });
+                const mouthGeom = new THREE.SphereGeometry(0.04, 16, 16);
+                mouthGeom.scale(2, 1, 0.5);
+                this.mouth = new THREE.Mesh(mouthGeom, mouthMat);
+                this.mouth.position.set(0, 0.18, 0.35);
+                this.avatarGroup.add(this.mouth);
+
+                // Blush
+                const blushMat = new THREE.MeshBasicMaterial({
+                    color: 0xff9999,
+                    transparent: true,
+                    opacity: 0.4
+                });
+                const blushGeom = new THREE.SphereGeometry(0.06, 16, 16);
+                blushGeom.scale(1.5, 1, 0.3);
+
+                this.leftBlush = new THREE.Mesh(blushGeom, blushMat);
+                this.leftBlush.position.set(-0.25, 0.3, 0.28);
+                this.avatarGroup.add(this.leftBlush);
+
+                this.rightBlush = new THREE.Mesh(blushGeom, blushMat.clone());
+                this.rightBlush.position.set(0.25, 0.3, 0.28);
+                this.avatarGroup.add(this.rightBlush);
+            }
+
+            createToonGradient() {
+                const colors = new Uint8Array([0, 80, 160, 255]);
+                const texture = new THREE.DataTexture(colors, colors.length, 1, THREE.RedFormat);
+                texture.needsUpdate = true;
+                return texture;
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            //   STYLE D: ANIME
+            // ═══════════════════════════════════════════════════════════════════
+            createAnimeAvatar() {
+                // Anime cel-shaded materials
+                const skinMat = new THREE.MeshToonMaterial({
+                    color: 0xfff5ee,
+                    gradientMap: this.createToonGradient()
+                });
+
+                // Face (anime proportions - pointed chin)
+                const faceGeom = new THREE.SphereGeometry(0.38, 64, 64);
+                faceGeom.scale(1, 1.15, 0.85);
+                this.head = new THREE.Mesh(faceGeom, skinMat);
+                this.head.position.y = 0.35;
+                this.avatarGroup.add(this.head);
+
+                // Chin point
+                const chinGeom = new THREE.ConeGeometry(0.15, 0.2, 32);
+                const chin = new THREE.Mesh(chinGeom, skinMat);
+                chin.rotation.x = Math.PI;
+                chin.position.set(0, 0.05, 0.1);
+                this.avatarGroup.add(chin);
+
+                // Neck
+                const neckGeom = new THREE.CylinderGeometry(0.07, 0.09, 0.15, 32);
+                const neck = new THREE.Mesh(neckGeom, skinMat);
+                neck.position.y = -0.05;
+                this.avatarGroup.add(neck);
+
+                // Body
+                const bodyMat = new THREE.MeshToonMaterial({
+                    color: 0x9d00ff,
+                    gradientMap: this.createToonGradient()
+                });
+                const bodyGeom = new THREE.SphereGeometry(0.3, 32, 32);
+                bodyGeom.scale(1.3, 0.7, 0.6);
+                const body = new THREE.Mesh(bodyGeom, bodyMat);
+                body.position.y = -0.25;
+                this.avatarGroup.add(body);
+
+                // Hair (anime spiky style)
+                const hairMat = new THREE.MeshToonMaterial({
+                    color: 0x1a0a15,
+                    gradientMap: this.createToonGradient()
+                });
+
+                // Main hair mass
+                const hairGeom = new THREE.SphereGeometry(0.42, 32, 32);
+                hairGeom.scale(1.05, 0.95, 0.9);
+                const hairMain = new THREE.Mesh(hairGeom, hairMat);
+                hairMain.position.set(0, 0.48, -0.02);
+                this.avatarGroup.add(hairMain);
+
+                // Hair spikes
+                const spikeGeom = new THREE.ConeGeometry(0.08, 0.25, 8);
+                for (let i = 0; i < 5; i++) {
+                    const spike = new THREE.Mesh(spikeGeom, hairMat);
+                    const angle = (i - 2) * 0.3;
+                    spike.position.set(Math.sin(angle) * 0.2, 0.7, Math.cos(angle) * 0.1 - 0.1);
+                    spike.rotation.z = angle * 0.5;
+                    spike.rotation.x = -0.3;
+                    this.avatarGroup.add(spike);
+                }
+
+                // Ahoge (hair antenna)
+                const ahogeGeom = new THREE.ConeGeometry(0.02, 0.2, 8);
+                const ahoge = new THREE.Mesh(ahogeGeom, hairMat);
+                ahoge.position.set(0.05, 0.85, 0.1);
+                ahoge.rotation.z = 0.5;
+                ahoge.rotation.x = -0.3;
+                this.avatarGroup.add(ahoge);
+
+                // HUGE anime eyes
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const eyeGeom = new THREE.SphereGeometry(0.1, 32, 32);
+                eyeGeom.scale(1, 1.3, 0.5);
+
+                this.leftEye = new THREE.Mesh(eyeGeom, eyeMat);
+                this.leftEye.position.set(-0.14, 0.4, 0.28);
+                this.avatarGroup.add(this.leftEye);
+
+                this.rightEye = new THREE.Mesh(eyeGeom, eyeMat);
+                this.rightEye.position.set(0.14, 0.4, 0.28);
+                this.avatarGroup.add(this.rightEye);
+
+                // Anime iris with gradient
+                const irisGradMat = new THREE.ShaderMaterial({
+                    uniforms: {
+                        color1: { value: new THREE.Color(0xff6b00) },
+                        color2: { value: new THREE.Color(0x4a2510) }
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 color1;
+                        uniform vec3 color2;
+                        varying vec2 vUv;
+                        void main() {
+                            float gradient = vUv.y;
+                            vec3 color = mix(color2, color1, gradient);
+                            gl_FragColor = vec4(color, 1.0);
+                        }
+                    `
+                });
+
+                const irisGeom = new THREE.SphereGeometry(0.06, 16, 16);
+                irisGeom.scale(1, 1.2, 0.3);
+
+                this.leftIris = new THREE.Mesh(irisGeom, irisGradMat);
+                this.leftIris.position.set(-0.14, 0.4, 0.35);
+                this.avatarGroup.add(this.leftIris);
+
+                this.rightIris = new THREE.Mesh(irisGeom, irisGradMat.clone());
+                this.rightIris.position.set(0.14, 0.4, 0.35);
+                this.avatarGroup.add(this.rightIris);
+
+                // Pupils
+                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const pupilGeom = new THREE.SphereGeometry(0.025, 16, 16);
+                pupilGeom.scale(1, 1.3, 0.3);
+
+                const leftPupil = new THREE.Mesh(pupilGeom, pupilMat);
+                leftPupil.position.set(-0.14, 0.4, 0.38);
+                this.avatarGroup.add(leftPupil);
+
+                const rightPupil = new THREE.Mesh(pupilGeom, pupilMat);
+                rightPupil.position.set(0.14, 0.4, 0.38);
+                this.avatarGroup.add(rightPupil);
+
+                // Anime eye highlights
+                const highlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const highlightGeom = new THREE.SphereGeometry(0.025, 16, 16);
+
+                const leftH1 = new THREE.Mesh(highlightGeom, highlightMat);
+                leftH1.position.set(-0.12, 0.44, 0.4);
+                this.avatarGroup.add(leftH1);
+
+                const rightH1 = new THREE.Mesh(highlightGeom, highlightMat);
+                rightH1.position.set(0.16, 0.44, 0.4);
+                this.avatarGroup.add(rightH1);
+
+                const highlight2Geom = new THREE.SphereGeometry(0.012, 8, 8);
+                const leftH2 = new THREE.Mesh(highlight2Geom, highlightMat);
+                leftH2.position.set(-0.16, 0.36, 0.39);
+                this.avatarGroup.add(leftH2);
+
+                const rightH2 = new THREE.Mesh(highlight2Geom, highlightMat);
+                rightH2.position.set(0.12, 0.36, 0.39);
+                this.avatarGroup.add(rightH2);
+
+                // Small anime mouth
+                const mouthMat = new THREE.MeshBasicMaterial({ color: 0xcc4466 });
+                const mouthGeom = new THREE.TorusGeometry(0.04, 0.01, 8, 16, Math.PI);
+                this.mouth = new THREE.Mesh(mouthGeom, mouthMat);
+                this.mouth.rotation.x = Math.PI;
+                this.mouth.position.set(0, 0.15, 0.32);
+                this.avatarGroup.add(this.mouth);
+
+                // Anime blush (always present)
+                const blushMat = new THREE.MeshBasicMaterial({
+                    color: 0xff9999,
+                    transparent: true,
+                    opacity: 0.5
+                });
+                const blushGeom = new THREE.PlaneGeometry(0.12, 0.04);
+
+                this.leftBlush = new THREE.Mesh(blushGeom, blushMat);
+                this.leftBlush.position.set(-0.22, 0.28, 0.3);
+                this.leftBlush.rotation.y = 0.3;
+                this.avatarGroup.add(this.leftBlush);
+
+                this.rightBlush = new THREE.Mesh(blushGeom, blushMat.clone());
+                this.rightBlush.position.set(0.22, 0.28, 0.3);
+                this.rightBlush.rotation.y = -0.3;
+                this.avatarGroup.add(this.rightBlush);
+            }
+
+            createEffects() {
+                // Bloom/glow effect simulation
+                // In a real implementation, you'd use EffectComposer with UnrealBloomPass
+            }
+
+            startIdleAnimations() {
+                // Random eye movement
+                setInterval(() => {
+                    if (!this.isSpeaking || Math.random() > 0.7) {
+                        this.eyeLookX = (Math.random() - 0.5) * 0.1;
+                        this.eyeLookY = (Math.random() - 0.5) * 0.05;
+                    }
+                }, 2000 + Math.random() * 2000);
+
+                // Random head tilt
+                setInterval(() => {
+                    this.headTiltTarget = (Math.random() - 0.5) * 0.15;
+                }, 3000 + Math.random() * 3000);
+            }
+
+            setStyle(style) {
+                this.style = style;
+                this.updateAvatarStyle();
+                document.getElementById('styleIndicator').textContent = style.toUpperCase();
+            }
+
+            setEmotion(emotion) {
+                this.emotion = emotion;
+                this.currentEmotionParams = this.emotions[emotion] || this.emotions.NEUTRAL;
+                document.getElementById('emotionIndicator').textContent = emotion;
+            }
+
+            startSpeaking() {
+                this.isSpeaking = true;
+                document.getElementById('speakingIndicator').classList.add('active');
+            }
+
+            stopSpeaking() {
+                this.isSpeaking = false;
+                document.getElementById('speakingIndicator').classList.remove('active');
+            }
+
+            update(dt) {
+                this.time += dt;
+                this.breathPhase += dt * 1.5;
+
+                // Blink
+                this.blinkTimer += dt;
+                if (this.blinkState === 0 && this.blinkTimer >= this.nextBlink) {
+                    this.blinkState = 1;
+                    this.blinkTimer = 0;
+                } else if (this.blinkState === 1 && this.blinkTimer >= 0.06) {
+                    this.blinkState = 2;
+                    this.blinkTimer = 0;
+                } else if (this.blinkState === 2 && this.blinkTimer >= 0.1) {
+                    this.blinkState = 3;
+                    this.blinkTimer = 0;
+                } else if (this.blinkState === 3 && this.blinkTimer >= 0.06) {
+                    this.blinkState = 0;
+                    this.blinkTimer = 0;
+                    this.nextBlink = 2 + Math.random() * 3;
+                }
+
+                const blinkScale = [1, 0.3, 0.05, 0.3][this.blinkState];
+
+                // Smooth head movement
+                this.headTilt += (this.headTiltTarget - this.headTilt) * 0.03;
+
+                // Breathing
+                const breathOffset = Math.sin(this.breathPhase) * 0.01;
+
+                // Mouth animation when speaking
+                if (this.isSpeaking) {
+                    this.mouthOpenness = 0.3 + Math.sin(this.time * 15) * 0.25 + Math.sin(this.time * 23) * 0.15;
+                } else {
+                    this.mouthOpenness *= 0.9;
+                }
+
+                // Apply animations
+                if (this.avatarGroup) {
+                    this.avatarGroup.rotation.z = this.headTilt;
+                    this.avatarGroup.position.y = breathOffset;
+                }
+
+                // Update eyes
+                if (this.leftEye && this.rightEye) {
+                    const eyeScale = this.currentEmotionParams.eyeScale * blinkScale;
+                    this.leftEye.scale.y = eyeScale;
+                    this.rightEye.scale.y = eyeScale;
+                }
+
+                if (this.leftIris && this.rightIris) {
+                    this.leftIris.position.x = -0.13 + this.eyeLookX;
+                    this.rightIris.position.x = 0.13 + this.eyeLookX;
+                    this.leftIris.position.y = 0.4 + this.eyeLookY;
+                    this.rightIris.position.y = 0.4 + this.eyeLookY;
+                }
+
+                // Update mouth
+                if (this.mouth) {
+                    const mouthScale = 1 + this.mouthOpenness * 2;
+                    this.mouth.scale.y = Math.max(0.5, mouthScale);
+                }
+
+                // Update blush based on emotion
+                if (this.leftBlush && this.rightBlush) {
+                    const blushOpacity = this.currentEmotionParams.blush;
+                    this.leftBlush.material.opacity = blushOpacity;
+                    this.rightBlush.material.opacity = blushOpacity;
+                }
+
+                // Update holographic material time
+                if (this.holoMaterial) {
+                    this.holoMaterial.uniforms.time.value = this.time;
+                }
+                if (this.gridMaterial) {
+                    this.gridMaterial.uniforms.time.value = this.time;
+                }
+
+                // Rotate particles
+                if (this.particles) {
+                    this.particles.rotation.y = this.time * 0.2;
+                }
+
+                // Animate lights
+                this.keyLight.position.x = 2 + Math.sin(this.time * 0.5) * 0.5;
+                this.fillLight.position.x = -2 + Math.cos(this.time * 0.3) * 0.3;
+            }
+
+            animate() {
+                const now = performance.now();
+                const dt = (now - (this.lastTime || now)) / 1000;
+                this.lastTime = now;
+
+                this.update(dt);
+                this.renderer.render(this.scene, this.camera);
+
+                requestAnimationFrame(() => this.animate());
+            }
+
+            onResize() {
+                const w = this.container.clientWidth;
+                const h = this.container.clientHeight;
+
+                this.camera.aspect = w / h;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(w, h);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        //   INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════════════
+
+        let avatar;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('avatar-container');
+            avatar = new Bree3DAvatar(container);
+
+            // IPC listeners
+            ipcRenderer.on('set-style', (event, style) => {
+                avatar.setStyle(style);
+            });
+
+            ipcRenderer.on('set-emotion', (event, emotion) => {
+                avatar.setEmotion(emotion);
+            });
+
+            ipcRenderer.on('start-speaking', (event, data) => {
+                avatar.setEmotion(data.emotion || 'NEUTRAL');
+                avatar.startSpeaking();
+            });
+
+            ipcRenderer.on('stop-speaking', () => {
+                avatar.stopSpeaking();
+            });
+
+            ipcRenderer.on('settings-updated', (event, settings) => {
+                if (settings.avatarStyle) {
+                    avatar.setStyle(settings.avatarStyle);
+                }
+            });
+
+            // Click to cycle styles
+            container.addEventListener('dblclick', () => {
+                const styles = ['holographic', 'realistic', 'stylized', 'anime'];
+                const idx = styles.indexOf(avatar.style);
+                avatar.setStyle(styles[(idx + 1) % styles.length]);
+            });
+        });
+
+        function closeAvatar() {
+            ipcRenderer.invoke('close-avatar-window');
+        }
+    </script>
+</body>
+</html>

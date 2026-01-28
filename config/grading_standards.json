@@ -1,0 +1,362 @@
+{
+    "cgc_scale": {
+        "10.0": {
+            "label": "Gem Mint",
+            "description": "The highest grade assigned. The collectible must have no evidence of any manufacturing, printing or binding defects. This copy has perfect page quality, perfect centering, and essentially perfect in every way.",
+            "max_defects": 0
+        },
+        "9.9": {
+            "label": "Mint",
+            "description": "Near perfection. Only a subtle manufacturing defect is allowed. Must have virtually perfect page quality.",
+            "max_defects": 1,
+            "allowed_defects": ["trace_manufacturing"]
+        },
+        "9.8": {
+            "label": "Near Mint/Mint",
+            "description": "Nearly perfect. Only minor, subtle manufacturing defects allowed. Stress lines or date stamps may be present if unobtrusive.",
+            "max_defects": 2,
+            "allowed_defects": ["trace_manufacturing", "minor_date_stamp"]
+        },
+        "9.6": {
+            "label": "Near Mint+",
+            "description": "Nearly perfect. A single minor defect is allowed. Corner creases must be less than 1/4 inch.",
+            "max_defects": 2,
+            "grade_penalty": {
+                "spine_stress": -0.2,
+                "minor_corner_crease": -0.2
+            }
+        },
+        "9.4": {
+            "label": "Near Mint",
+            "description": "A nearly perfect copy. Several minor defects are acceptable including corner blunting, small spine stresses.",
+            "max_defects": 3,
+            "grade_penalty": {
+                "spine_stress": -0.3,
+                "corner_blunting": -0.2,
+                "minor_edge_wear": -0.2
+            }
+        },
+        "9.2": {
+            "label": "Near Mint-",
+            "description": "A nearly perfect copy. Several minor defects are acceptable.",
+            "max_defects": 4
+        },
+        "9.0": {
+            "label": "Very Fine/Near Mint",
+            "description": "Small amount of typical defects. Spine may have minor stress lines. Minor corner wear is acceptable.",
+            "grade_penalty": {
+                "spine_stress": -0.4,
+                "spine_roll": -0.5,
+                "corner_wear": -0.3,
+                "edge_wear": -0.3
+            }
+        },
+        "8.5": {
+            "label": "Very Fine+",
+            "description": "An attractive, above-average copy. Shows minor wear but is still relatively flat.",
+            "grade_penalty": {
+                "spine_stress": -0.5,
+                "spine_roll": -0.6,
+                "minor_tear": -0.5,
+                "corner_crease": -0.4
+            }
+        },
+        "8.0": {
+            "label": "Very Fine",
+            "description": "An attractive copy with moderate wear. Minor creases, spine roll, or slight rust on staples are acceptable.",
+            "grade_penalty": {
+                "spine_roll": -0.7,
+                "moderate_crease": -0.6,
+                "staple_rust": -0.4,
+                "color_fading": -0.5
+            }
+        },
+        "7.5": {
+            "label": "Very Fine-",
+            "description": "An above-average copy showing minor-to-moderate wear.",
+            "grade_penalty": {
+                "spine_roll": -0.8,
+                "moderate_crease": -0.7,
+                "edge_tears": -0.5
+            }
+        },
+        "7.0": {
+            "label": "Fine/Very Fine",
+            "description": "An above-average copy with minor-to-moderate wear. May have a small spine split.",
+            "grade_penalty": {
+                "spine_split": -0.8,
+                "moderate_wear": -0.7,
+                "foxing": -0.5
+            }
+        },
+        "6.5": {
+            "label": "Fine+",
+            "description": "A slightly above-average copy with moderate wear.",
+            "grade_penalty": {
+                "spine_split": -1.0,
+                "cover_wear": -0.8,
+                "staining": -0.7
+            }
+        },
+        "6.0": {
+            "label": "Fine",
+            "description": "A slightly above-average copy with moderate wear and defects.",
+            "grade_penalty": {
+                "spine_split": -1.2,
+                "moderate_tear": -1.0,
+                "writing": -1.0,
+                "tape": -1.5
+            }
+        },
+        "5.5": {
+            "label": "Fine-",
+            "description": "A slightly above-average copy.",
+            "max_defects": "multiple"
+        },
+        "5.0": {
+            "label": "Very Good/Fine",
+            "description": "An average copy showing wear and defects.",
+            "grade_penalty": {
+                "cover_detached": -1.5,
+                "page_quality_tan": -0.5
+            }
+        },
+        "4.5": {
+            "label": "Very Good+",
+            "description": "A slightly below-average copy showing significant wear.",
+            "max_defects": "multiple"
+        },
+        "4.0": {
+            "label": "Very Good",
+            "description": "A slightly below-average copy showing significant wear and defects.",
+            "grade_penalty": {
+                "major_spine_split": -2.0,
+                "cover_detached": -2.0,
+                "major_staining": -1.5
+            }
+        },
+        "3.5": {
+            "label": "Very Good-",
+            "description": "A below-average copy.",
+            "max_defects": "multiple"
+        },
+        "3.0": {
+            "label": "Good/Very Good",
+            "description": "A below-average copy that has accumulated defects.",
+            "grade_penalty": {
+                "cover_detached": -2.5,
+                "major_tear": -2.0,
+                "pages_missing_small": -2.0
+            }
+        },
+        "2.5": {
+            "label": "Good+",
+            "description": "A well-read copy showing substantial wear.",
+            "max_defects": "multiple"
+        },
+        "2.0": {
+            "label": "Good",
+            "description": "A well-read copy showing substantial wear.",
+            "grade_penalty": {
+                "cover_missing": -3.0,
+                "major_pieces_missing": -2.5,
+                "water_damage": -2.0
+            }
+        },
+        "1.8": {
+            "label": "Good-",
+            "description": "A very heavily read copy.",
+            "max_defects": "multiple"
+        },
+        "1.5": {
+            "label": "Fair/Good",
+            "description": "A very heavily read copy with significant defects.",
+            "grade_penalty": {
+                "incomplete": -3.0,
+                "severe_damage": -3.0
+            }
+        },
+        "1.0": {
+            "label": "Fair",
+            "description": "A heavily worn copy with severe damage.",
+            "max_defects": "severe"
+        },
+        "0.5": {
+            "label": "Poor",
+            "description": "A barely readable copy with severe damage.",
+            "max_defects": "severe"
+        }
+    },
+    "defect_types": {
+        "spine": {
+            "spine_stress": {
+                "trace": -0.1,
+                "minor": -0.3,
+                "moderate": -0.6,
+                "major": -1.0,
+                "severe": -2.0
+            },
+            "spine_roll": {
+                "trace": -0.2,
+                "minor": -0.4,
+                "moderate": -0.8,
+                "major": -1.5,
+                "severe": -2.5
+            },
+            "spine_split": {
+                "trace": -0.3,
+                "minor": -0.6,
+                "moderate": -1.0,
+                "major": -2.0,
+                "severe": -3.0
+            }
+        },
+        "cover": {
+            "cover_tear": {
+                "trace": -0.2,
+                "minor": -0.5,
+                "moderate": -1.0,
+                "major": -2.0,
+                "severe": -3.5
+            },
+            "cover_crease": {
+                "trace": -0.1,
+                "minor": -0.3,
+                "moderate": -0.7,
+                "major": -1.5,
+                "severe": -2.5
+            },
+            "cover_detached": {
+                "minor": -2.0,
+                "moderate": -3.0,
+                "major": -4.0,
+                "severe": -5.0
+            }
+        },
+        "edge": {
+            "edge_wear": {
+                "trace": -0.1,
+                "minor": -0.2,
+                "moderate": -0.5,
+                "major": -1.0,
+                "severe": -1.5
+            },
+            "edge_chipping": {
+                "trace": -0.2,
+                "minor": -0.4,
+                "moderate": -0.8,
+                "major": -1.5,
+                "severe": -2.5
+            }
+        },
+        "corner": {
+            "corner_blunting": {
+                "trace": -0.1,
+                "minor": -0.2,
+                "moderate": -0.4,
+                "major": -0.8,
+                "severe": -1.2
+            },
+            "corner_crease": {
+                "trace": -0.1,
+                "minor": -0.3,
+                "moderate": -0.6,
+                "major": -1.0,
+                "severe": -1.5
+            }
+        },
+        "color": {
+            "color_fading": {
+                "trace": -0.1,
+                "minor": -0.3,
+                "moderate": -0.6,
+                "major": -1.2,
+                "severe": -2.0
+            },
+            "foxing": {
+                "trace": -0.1,
+                "minor": -0.3,
+                "moderate": -0.5,
+                "major": -1.0,
+                "severe": -1.5
+            },
+            "oxidation": {
+                "trace": -0.2,
+                "minor": -0.4,
+                "moderate": -0.8,
+                "major": -1.5,
+                "severe": -2.5
+            }
+        },
+        "staple": {
+            "staple_rust": {
+                "trace": -0.1,
+                "minor": -0.2,
+                "moderate": -0.5,
+                "major": -1.0,
+                "severe": -1.5
+            },
+            "staple_missing": {
+                "one": -1.0,
+                "both": -2.0
+            },
+            "staple_loose": {
+                "minor": -0.3,
+                "moderate": -0.6,
+                "major": -1.0
+            }
+        },
+        "contamination": {
+            "writing": {
+                "trace": -0.5,
+                "minor": -1.0,
+                "moderate": -1.5,
+                "major": -2.5,
+                "severe": -4.0
+            },
+            "tape": {
+                "trace": -0.5,
+                "minor": -1.0,
+                "moderate": -2.0,
+                "major": -3.0,
+                "severe": -4.0
+            },
+            "staining": {
+                "trace": -0.2,
+                "minor": -0.5,
+                "moderate": -1.0,
+                "major": -2.0,
+                "severe": -3.0
+            },
+            "water_damage": {
+                "trace": -0.5,
+                "minor": -1.0,
+                "moderate": -2.0,
+                "major": -3.5,
+                "severe": -5.0
+            }
+        }
+    },
+    "page_quality": {
+        "white": 0,
+        "off_white_to_white": -0.1,
+        "off_white": -0.2,
+        "cream_to_off_white": -0.3,
+        "cream": -0.4,
+        "tan": -0.5,
+        "brown": -1.0,
+        "brittle": -2.0
+    },
+    "restoration_penalties": {
+        "professional": {
+            "light": "Purple Label",
+            "moderate": "Purple Label",
+            "extensive": "Purple Label"
+        },
+        "amateur": {
+            "light": -1.0,
+            "moderate": -2.0,
+            "extensive": -3.0
+        }
+    }
+}

@@ -1,0 +1,190 @@
+{
+    "psa_scale": {
+        "10": {
+            "label": "Gem Mint",
+            "description": "A virtually perfect card. Attributes include four perfectly sharp corners, sharp focus, and full original gloss. A PSA Gem Mint 10 must be free of staining, and exhibit only the slightest white on corners under magnification.",
+            "centering": {"front": "55/45 or better", "back": "75/25 or better"},
+            "corners": "Four perfectly sharp corners",
+            "edges": "No chipping or wear",
+            "surface": "No print spots, color or focus imperfections"
+        },
+        "9": {
+            "label": "Mint",
+            "description": "A superb condition card that exhibits only one of the following minor flaws: a very slight wax stain on reverse, a minor printing imperfection, or slightly off-white borders.",
+            "centering": {"front": "60/40 or better", "back": "90/10 or better"},
+            "corners": "Four sharp corners with a hint of white",
+            "edges": "Virtually no chipping",
+            "surface": "Only one minor flaw"
+        },
+        "8": {
+            "label": "Near Mint-Mint",
+            "description": "A super high-end card that appears Mint 9 at first glance, but upon closer inspection, the card can exhibit the following: a slight wax stain on the back, minimal fraying at the corners, slight loss of original gloss, or a minor print line.",
+            "centering": {"front": "65/35 or better", "back": "90/10 or better"},
+            "corners": "Slight touching of white visible",
+            "edges": "Minor chipping visible to naked eye",
+            "surface": "Minor surface wear, light scratches possible"
+        },
+        "7": {
+            "label": "Near Mint",
+            "description": "A card with just a slight surface wear visible upon close inspection. There may be slight fraying on some corners. Picture focus may be slightly out-of-register. A minor print line is acceptable.",
+            "centering": {"front": "70/30 or better", "back": "90/10 or better"},
+            "corners": "Slight fraying visible",
+            "edges": "Minor edge wear",
+            "surface": "Slight surface wear, focus slightly off"
+        },
+        "6": {
+            "label": "Excellent-Mint",
+            "description": "A card with visible surface wear or a printing defect which does not detract from its overall appeal. A very light scratch may be detected only upon close inspection.",
+            "centering": {"front": "75/25 or better", "back": "90/10 or better"},
+            "corners": "Noticeable fraying",
+            "edges": "Visible edge wear",
+            "surface": "Light scratches visible"
+        },
+        "5": {
+            "label": "Excellent",
+            "description": "A card with obvious surface wear but no creases or bends. Centering must be 80/20 or better on the front and 90/10 or better on the back.",
+            "centering": {"front": "80/20 or better", "back": "90/10 or better"},
+            "corners": "Moderate corner wear",
+            "edges": "Moderate edge wear",
+            "surface": "Obvious surface wear, no creases"
+        },
+        "4": {
+            "label": "Very Good-Excellent",
+            "description": "A card that has more corner wear than a PSA EX 5, but no creases. Centering must be 85/15 or better on the front and 90/10 or better on the back.",
+            "centering": {"front": "85/15 or better", "back": "90/10 or better"},
+            "corners": "Significant corner wear",
+            "edges": "Noticeable edge wear",
+            "surface": "Surface wear present"
+        },
+        "3": {
+            "label": "Very Good",
+            "description": "A card that shows obvious handling. The corners may show advanced wearing and rounding, and the borders may be somewhat yellowed.",
+            "centering": "May be off-center",
+            "corners": "Corners show rounding",
+            "edges": "Rough edges",
+            "surface": "May have light creases"
+        },
+        "2": {
+            "label": "Good",
+            "description": "A well-worn card with creases, heavy staining, and heavy rounding on corners. A card graded Good 2 might be heavily trimmed.",
+            "centering": "Off-center acceptable",
+            "corners": "Heavy rounding",
+            "edges": "Significant edge damage",
+            "surface": "Creases and stains present"
+        },
+        "1": {
+            "label": "Poor",
+            "description": "A card with miscuts, heavy creasing, holes, and major stains. May also have a missing piece.",
+            "centering": "Any centering",
+            "corners": "Extreme wear",
+            "edges": "Extreme wear",
+            "surface": "Major defects present"
+        }
+    },
+    "bgs_scale": {
+        "10": {
+            "label": "Pristine",
+            "description": "The highest grade. A virtually flawless card in every way.",
+            "subgrades_required": "All four subgrades must be 10"
+        },
+        "9.5": {
+            "label": "Gem Mint",
+            "description": "The highest commonly issued grade. Extraordinary card.",
+            "black_label_eligible": true,
+            "subgrades_required": "All subgrades must be 9.5 or higher for Black Label"
+        },
+        "9": {
+            "label": "Mint",
+            "description": "A superb card with only minor imperfections."
+        },
+        "8.5": {
+            "label": "Near Mint-Mint+",
+            "description": "An excellent card with minor flaws."
+        },
+        "8": {
+            "label": "Near Mint-Mint",
+            "description": "A great card with visible minor wear."
+        },
+        "7.5": {
+            "label": "Near Mint+",
+            "description": "A card with slight wear."
+        },
+        "7": {
+            "label": "Near Mint",
+            "description": "A card with visible wear on one or more attributes."
+        }
+    },
+    "sgc_scale": {
+        "10": {"label": "Gem Mint", "equivalent_psa": 10},
+        "9.5": {"label": "Mint+", "equivalent_psa": 9.5},
+        "9": {"label": "Mint", "equivalent_psa": 9},
+        "8.5": {"label": "Near Mint-Mint+", "equivalent_psa": 8.5},
+        "8": {"label": "Near Mint-Mint", "equivalent_psa": 8},
+        "7": {"label": "Near Mint", "equivalent_psa": 7},
+        "6": {"label": "Excellent-Mint", "equivalent_psa": 6},
+        "5": {"label": "Excellent", "equivalent_psa": 5},
+        "4": {"label": "Very Good-Excellent", "equivalent_psa": 4},
+        "3": {"label": "Very Good", "equivalent_psa": 3},
+        "2": {"label": "Good", "equivalent_psa": 2},
+        "1": {"label": "Poor", "equivalent_psa": 1}
+    },
+    "subgrade_categories": {
+        "centering": {
+            "weight": 0.25,
+            "criteria": ["Front L/R percentage", "Front T/B percentage", "Back L/R percentage", "Back T/B percentage"]
+        },
+        "corners": {
+            "weight": 0.25,
+            "criteria": ["Sharpness", "Whitening", "Dents", "Fraying"]
+        },
+        "edges": {
+            "weight": 0.25,
+            "criteria": ["Chipping", "Wear", "Whitening"]
+        },
+        "surface": {
+            "weight": 0.25,
+            "criteria": ["Scratches", "Print defects", "Staining", "Gloss"]
+        }
+    },
+    "defect_types": {
+        "centering": {
+            "miscut": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -2.0, "severe": -4.0},
+            "off_center": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -2.0, "severe": -3.0}
+        },
+        "corners": {
+            "whitening": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -1.5, "severe": -2.0},
+            "fraying": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -1.5, "severe": -2.0},
+            "ding": {"minor": -0.5, "moderate": -1.0, "major": -2.0}
+        },
+        "edges": {
+            "chipping": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -1.5, "severe": -2.0},
+            "wear": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -1.5}
+        },
+        "surface": {
+            "scratch": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -2.0, "severe": -3.0},
+            "print_defect": {"trace": -0.25, "minor": -0.5, "moderate": -1.0, "major": -2.0},
+            "stain": {"trace": -0.5, "minor": -1.0, "moderate": -2.0, "major": -3.0, "severe": -4.0},
+            "crease": {"minor": -1.5, "moderate": -2.5, "major": -4.0, "severe": -5.0}
+        }
+    },
+    "card_types": {
+        "sports": {
+            "baseball": {"era": ["vintage", "modern"], "popular_sets": ["Topps", "Bowman", "Fleer", "Upper Deck"]},
+            "basketball": {"popular_sets": ["Topps", "Panini Prizm", "Hoops", "Fleer"]},
+            "football": {"popular_sets": ["Topps", "Panini", "Score", "Playoff"]},
+            "hockey": {"popular_sets": ["Topps", "Upper Deck", "O-Pee-Chee"]}
+        },
+        "pokemon": {"era": ["Base Set", "Jungle", "Fossil", "Team Rocket", "Neo", "ex", "Diamond & Pearl", "Sword & Shield", "Scarlet & Violet"]},
+        "magic_the_gathering": {"era": ["Alpha", "Beta", "Unlimited", "Revised", "Modern"]},
+        "yugioh": {"era": ["1st Edition", "Unlimited", "Collector's Rare"]},
+        "one_piece": {},
+        "weiss_schwarz": {}
+    },
+    "auto_grades": {
+        "10": {"label": "Gem Mint", "description": "Flawless signature, perfectly placed"},
+        "9": {"label": "Mint", "description": "Near perfect signature with minor placement issue"},
+        "8": {"label": "Near Mint-Mint", "description": "Clean signature with slight imperfection"},
+        "7": {"label": "Near Mint", "description": "Good signature with some fading or smearing"},
+        "6": {"label": "Excellent-Mint", "description": "Signature shows wear or poor placement"}
+    }
+}

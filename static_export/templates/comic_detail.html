@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ comic.title }}{% if comic.issue_number %} #{{ comic.issue_number }}{% endif %} - Grade: {{ comic.consensus_grade or 'Ungraded' }}">
+    <title>{{ comic.title }}{% if comic.issue_number %} #{{ comic.issue_number }}{% endif %} | Comic Collection</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../gallery.html">Full Gallery</a></li>
+            <li><a href="../stats.html">Statistics</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="comic-detail">
+            <div class="detail-images">
+                {% if include_images and comic.front_image_path %}
+                <img src="../{{ comic.front_image_path }}" alt="{{ comic.title }} - Front Cover">
+                {% endif %}
+                {% if include_images and comic.back_image_path %}
+                <img src="../{{ comic.back_image_path }}" alt="{{ comic.title }} - Back Cover">
+                {% endif %}
+            </div>
+
+            <div class="detail-info">
+                <h1>{{ comic.title }}{% if comic.issue_number %} #{{ comic.issue_number }}{% endif %}</h1>
+
+                {% if comic.publisher %}
+                <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 10px;">{{ comic.publisher }}</p>
+                {% endif %}
+
+                {% if comic.publication_year %}
+                <p style="color: #64748b; margin-bottom: 30px;">Published: {{ comic.publication_year }}</p>
+                {% endif %}
+
+                {% if comic.key_issue %}
+                <div style="background: rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong style="color: #f59e0b;">KEY ISSUE</strong>
+                    {% if comic.key_issue_reason %}
+                    <p style="margin-top: 5px; color: #94a3b8;">{{ comic.key_issue_reason }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div style="background: #1e293b; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <div>
+                            <p style="color: #64748b; font-size: 0.9rem;">CGC Grade</p>
+                            <div class="detail-grade">{{ comic.consensus_grade or '--' }}</div>
+                            <p style="color: #94a3b8;">{{ comic.consensus_grade | grade_label }}</p>
+                        </div>
+                        {% if comic.grade_confidence %}
+                        <div style="padding-left: 30px; border-left: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color: #64748b; font-size: 0.9rem;">Confidence</p>
+                            <p style="font-size: 1.5rem; font-weight: 600;">{{ "%.0f" | format(comic.grade_confidence * 100) }}%</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if include_pricing and comic.consensus_price %}
+                <div style="background: #1e293b; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 5px;">Estimated Value</p>
+                    <p style="font-size: 2rem; font-weight: 700; color: #22c55e;">{{ comic.consensus_price | currency }}</p>
+                    {% if comic.price_range_low and comic.price_range_high %}
+                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 5px;">
+                        Range: {{ comic.price_range_low | currency }} - {{ comic.price_range_high | currency }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if comic.confirmed_defects %}
+                <div class="defects-list">
+                    <h3 style="margin-bottom: 15px; color: #ef4444;">Detected Defects</h3>
+                    {% for defect in comic.confirmed_defects %}
+                    <div class="defect-item">
+                        <strong>{{ defect.type | replace('_', ' ') | title }}</strong>
+                        <span style="float: right; color: #94a3b8;">{{ defect.severity }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if comic.notes %}
+                <div style="margin-top: 20px;">
+                    <h3>Notes</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">{{ comic.notes }}</p>
+                </div>
+                {% endif %}
+
+                {% if comic.investor_notes %}
+                <div style="margin-top: 20px; background: rgba(99, 102, 241, 0.1); padding: 20px; border-radius: 8px;">
+                    <h3 style="color: #6366f1;">Investor Notes</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">{{ comic.investor_notes }}</p>
+                </div>
+                {% endif %}
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a href="../gallery.html" style="color: #6366f1; text-decoration: none;">&larr; Back to Gallery</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Generated with Comic Grading System | Authority Level 11.0</p>
+    </footer>
+</body>
+</html>

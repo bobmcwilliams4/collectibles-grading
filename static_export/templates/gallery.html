@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Full gallery of comic book collection">
+    <title>Gallery | Comic Collection</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header style="padding: 40px 0;">
+        <div class="container">
+            <h1>Full Gallery</h1>
+            <p class="subtitle">{{ total }} Comics</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="gallery.html">Full Gallery</a></li>
+            <li><a href="stats.html">Statistics</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="comics-grid">
+            {% for comic in comics %}
+            <article class="comic-card">
+                <a href="comics/comic_{{ comic.id }}.html">
+                    <div class="comic-image">
+                        {% if comic.front_image_path %}
+                        <img src="{{ comic.front_image_path }}" alt="{{ comic.title }}" loading="lazy">
+                        {% else %}
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b;">No Image</div>
+                        {% endif %}
+                        {% if comic.consensus_grade %}
+                        <span class="grade-badge {{ comic.consensus_grade | grade_class }}">
+                            {{ comic.consensus_grade }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="comic-info">
+                        <h3>{{ comic.title }}{% if comic.issue_number %} #{{ comic.issue_number }}{% endif %}</h3>
+                        <p class="publisher">{{ comic.publisher or 'Unknown Publisher' }}</p>
+                        {% if comic.publication_year %}
+                        <p class="year" style="color: #64748b; font-size: 0.85rem;">{{ comic.publication_year }}</p>
+                        {% endif %}
+                        {% if comic.consensus_price %}
+                        <p class="price">{{ comic.consensus_price | currency }}</p>
+                        {% endif %}
+                        {% if comic.key_issue %}
+                        <span style="display: inline-block; margin-top: 8px; padding: 4px 10px; background: #f59e0b; color: black; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">KEY ISSUE</span>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>Generated with Comic Grading System | Authority Level 11.0</p>
+    </footer>
+</body>
+</html>

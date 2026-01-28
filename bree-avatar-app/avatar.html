@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bree Avatar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple-primary: #9d00ff;
+            --purple-dark: #6a0dad;
+            --purple-light: #c77dff;
+            --echo-orange: #ff6b00;
+            --echo-orange-light: #ff9248;
+            --magenta: #ff00ff;
+            --cyan: #00ffff;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background: transparent;
+            -webkit-app-region: drag;
+        }
+
+        .avatar-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 20px;
+        }
+
+        /* Avatar Canvas */
+        #avatar-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Holographic Effects Overlay */
+        .holo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(157, 0, 255, 0.03) 2px,
+                    rgba(157, 0, 255, 0.03) 4px
+                );
+            animation: holoFlicker 0.1s infinite;
+        }
+
+        @keyframes holoFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.98; }
+        }
+
+        /* Glow ring at base */
+        .glow-ring {
+            position: absolute;
+            bottom: 30px;
+            width: 70%;
+            height: 20px;
+            background: radial-gradient(ellipse at center,
+                var(--purple-primary) 0%,
+                var(--echo-orange) 30%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            filter: blur(10px);
+            opacity: 0.8;
+            animation: ringPulse 2s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { transform: scaleX(1); opacity: 0.8; }
+            50% { transform: scaleX(1.1); opacity: 1; }
+        }
+
+        /* Name plate */
+        .name-plate {
+            position: absolute;
+            bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            color: var(--purple-light);
+            text-shadow: 0 0 10px var(--purple-primary), 0 0 20px var(--echo-orange);
+            z-index: 10;
+            -webkit-app-region: no-drag;
+        }
+
+        /* Emotion indicator */
+        .emotion-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--purple-primary);
+            border-radius: 15px;
+            z-index: 10;
+            -webkit-app-region: no-drag;
+        }
+
+        /* Style indicator */
+        .style-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--echo-orange);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--echo-orange);
+            border-radius: 15px;
+            z-index: 10;
+            -webkit-app-region: no-drag;
+        }
+
+        /* Close button */
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 0, 80, 0.6);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            -webkit-app-region: no-drag;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .avatar-container:hover .close-btn {
+            opacity: 1;
+        }
+
+        /* Speaking animation indicator */
+        .speaking-waves {
+            position: absolute;
+            bottom: 60px;
+            display: flex;
+            gap: 3px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .speaking-waves.active {
+            opacity: 1;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to top, var(--purple-primary), var(--echo-orange));
+            border-radius: 2px;
+            animation: waveAnim 0.5s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes waveAnim {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar-container">
+        <canvas id="avatar-canvas"></canvas>
+        <div class="holo-overlay" id="holoOverlay"></div>
+        <div class="glow-ring"></div>
+        <span class="style-indicator" id="styleIndicator">HOLOGRAPHIC</span>
+        <span class="emotion-indicator" id="emotionIndicator">NEUTRAL</span>
+        <span class="name-plate">B R E E</span>
+        <div class="speaking-waves" id="speakingWaves">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+        <button class="close-btn" onclick="closeAvatar()"></button>
+    </div>
+
+    <script src="avatar-renderer.js"></script>
+</body>
+</html>

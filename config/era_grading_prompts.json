@@ -1,0 +1,253 @@
+{
+  "eras": {
+    "platinum": {
+      "name": "Platinum Age",
+      "years": "1897-1937",
+      "description": "Early comic strip reprints and proto-comics",
+      "weight_adjustments": {
+        "paper_quality": 0.15,
+        "color_retention": 0.10,
+        "structural_integrity": 0.20,
+        "staple_condition": 0.10,
+        "cover_gloss": 0.05
+      },
+      "common_defects": [
+        "Brittle pages due to acidic paper",
+        "Extensive tanning and foxing",
+        "Missing or detached covers",
+        "Water stains and mold damage",
+        "Tape repairs from era collectors"
+      ],
+      "grading_notes": "Paper quality is paramount - many Platinum Age comics used highly acidic newsprint. Expect significant browning and brittleness. Completeness is often an issue - many were stripped of covers. Restoration is common and expected.",
+      "prompt_additions": [
+        "Pay special attention to paper brittleness - does it appear fragile or crumbling?",
+        "Check for signs of amateur restoration common to this era (tape, glue, trimming)",
+        "Assess page completeness - missing pages are common",
+        "Note any newsprint quality indicators",
+        "Evaluate binding method - many used different techniques than later eras"
+      ]
+    },
+    "golden": {
+      "name": "Golden Age",
+      "years": "1938-1956",
+      "description": "First superhero comics, including Action Comics #1",
+      "weight_adjustments": {
+        "paper_quality": 0.12,
+        "color_retention": 0.12,
+        "structural_integrity": 0.15,
+        "staple_condition": 0.12,
+        "cover_gloss": 0.08
+      },
+      "common_defects": [
+        "Marvel chipping (brittle page edges)",
+        "Spine roll from poor storage",
+        "Oxidation shadowing on covers",
+        "Rusty staples",
+        "Subscription creases",
+        "War-time paper quality issues"
+      ],
+      "grading_notes": "Golden Age comics used wartime paper (1941-1945) which was particularly poor quality. Marvel/Timely comics are notorious for 'Marvel chipping'. Staple rust is extremely common. Cover gloss is a key differentiator between high grades.",
+      "prompt_additions": [
+        "Carefully examine page edges for Marvel chipping or brittleness",
+        "Check staples for rust migration into surrounding paper",
+        "Assess spine stress - these comics were often rolled for storage",
+        "Look for oxidation shadow around staples on interior pages",
+        "Note paper stock - wartime issues (1942-1945) had inferior paper",
+        "Examine centerfold for detachment signs"
+      ]
+    },
+    "silver": {
+      "name": "Silver Age",
+      "years": "1956-1970",
+      "description": "Marvel Comics revolution, revised DC heroes",
+      "weight_adjustments": {
+        "paper_quality": 0.08,
+        "color_retention": 0.15,
+        "structural_integrity": 0.12,
+        "staple_condition": 0.10,
+        "cover_gloss": 0.15
+      },
+      "common_defects": [
+        "Subscription creases from mail delivery",
+        "Marvel corner stamps/clippings",
+        "Spine stress and roll",
+        "Color fading on covers",
+        "Distributor stamps/markings"
+      ],
+      "grading_notes": "Silver Age paper quality improved but color preservation varies greatly. Marvel value stamps and corner boxes were often clipped. Cover gloss becomes a major grading factor. Subscription copies have distinctive spine/cover wear.",
+      "prompt_additions": [
+        "Check for Marvel value stamp presence (if applicable)",
+        "Examine corner boxes for clipping",
+        "Assess cover gloss retention - key for high grades",
+        "Look for subscription fold/crease patterns",
+        "Check for price stickers or distributor markings",
+        "Evaluate color vibrancy especially on key colors (red/yellow fade faster)"
+      ]
+    },
+    "bronze": {
+      "name": "Bronze Age",
+      "years": "1970-1984",
+      "description": "Mature themes, direct market begins",
+      "weight_adjustments": {
+        "paper_quality": 0.06,
+        "color_retention": 0.12,
+        "structural_integrity": 0.10,
+        "staple_condition": 0.08,
+        "cover_gloss": 0.18
+      },
+      "common_defects": [
+        "Spine ticks and stress lines",
+        "Reading creases",
+        "Cover corner wear",
+        "Price sticker residue",
+        "Newsstand handling wear"
+      ],
+      "grading_notes": "Bronze Age introduced direct market editions with generally better preservation. Newsstand copies show more handling wear. Cover gloss is critical for 9.8+ grades. Spine stress lines are common from spinner rack display.",
+      "prompt_additions": [
+        "Distinguish between newsstand and direct edition condition",
+        "Examine spine carefully for stress lines and ticks",
+        "Check cover corners for blunting",
+        "Look for reading creases especially at centerfold",
+        "Assess cover gloss - essential for Near Mint grades",
+        "Note any price variants or distribution marks"
+      ]
+    },
+    "copper": {
+      "name": "Copper Age",
+      "years": "1984-1991",
+      "description": "Independent comics boom, speculation era begins",
+      "weight_adjustments": {
+        "paper_quality": 0.05,
+        "color_retention": 0.10,
+        "structural_integrity": 0.10,
+        "staple_condition": 0.06,
+        "cover_gloss": 0.20
+      },
+      "common_defects": [
+        "Bindery defects",
+        "Color printing errors",
+        "Manufacturing spine stress",
+        "Bent/rolled covers from storage",
+        "Diamond damage from distribution"
+      ],
+      "grading_notes": "Copper Age saw introduction of better paper and printing. Manufacturing defects become more noticeable at high grades. Many comics were immediately bagged, but often with damaging non-archival materials.",
+      "prompt_additions": [
+        "Check for manufacturing/bindery defects",
+        "Examine for non-archival storage damage (acid migration)",
+        "Look for color printing misregistration",
+        "Assess spine squareness - manufacturing variations exist",
+        "Check for diamond distributor damage patterns"
+      ]
+    },
+    "modern": {
+      "name": "Modern Age",
+      "years": "1991-present",
+      "description": "Current era with variant covers and digital coloring",
+      "weight_adjustments": {
+        "paper_quality": 0.03,
+        "color_retention": 0.08,
+        "structural_integrity": 0.08,
+        "staple_condition": 0.05,
+        "cover_gloss": 0.22
+      },
+      "common_defects": [
+        "Manufacturing defects (bindery tears, ink spots)",
+        "Shipping damage",
+        "Color breaking on spine",
+        "Corner dents",
+        "Fingerprints on covers"
+      ],
+      "grading_notes": "Modern comics use high-quality paper but manufacturing tolerances create defects. Expectations for 9.8+ are extremely high. Minor defects that wouldn't affect earlier era grades become significant. White pages are expected, not exceptional.",
+      "prompt_additions": [
+        "Scrutinize for even minor manufacturing defects",
+        "Check spine for any color breaking",
+        "Examine covers for fingerprints or handling marks",
+        "Look for corner dents or shipping damage",
+        "Assess centering of cover artwork",
+        "Note any variant cover specific issues (foil, die-cut, etc.)"
+      ]
+    }
+  },
+  "base_grading_prompt": {
+    "system": "You are an expert comic book grader following CGC (Certified Guaranty Company) grading standards. Analyze the provided comic book image(s) and provide a detailed grade assessment.",
+    "instructions": [
+      "Examine the cover condition including gloss, color retention, and wear",
+      "Assess structural integrity: spine, staples, binding",
+      "Note all defects with severity ratings (minor/moderate/major)",
+      "Consider the comic's era when evaluating condition",
+      "Provide a numeric grade from 0.5 to 10.0 on the CGC scale",
+      "List specific defects that influenced the grade",
+      "Note any signs of restoration or cleaning"
+    ],
+    "grade_scale": {
+      "10.0": "Gem Mint - Perfect in every way",
+      "9.9": "Mint - Near perfect with minuscule defects",
+      "9.8": "Near Mint/Mint - Nearly perfect, minor manufacturing defects only",
+      "9.6": "Near Mint+ - Very minor cover/interior flaws",
+      "9.4": "Near Mint - Minor wear beginning to show",
+      "9.2": "Near Mint- - Slight cover wear, small defects",
+      "9.0": "Very Fine/Near Mint - Some wear, minor creasing",
+      "8.5": "Very Fine+ - Minor wear, small creases",
+      "8.0": "Very Fine - Minor wear, possible small creases",
+      "7.5": "Very Fine- - Moderate wear, possible creases",
+      "7.0": "Fine/Very Fine - Some wear, light creases",
+      "6.5": "Fine+ - Moderate wear visible",
+      "6.0": "Fine - Moderate wear, creases present",
+      "5.5": "Fine- - Above average with noticeable wear",
+      "5.0": "Very Good/Fine - Average used copy",
+      "4.5": "Very Good+ - Below average, multiple defects",
+      "4.0": "Very Good - Significant wear, still complete",
+      "3.5": "Very Good- - Heavy wear, all pages present",
+      "3.0": "Good/Very Good - Substantial wear, readable",
+      "2.5": "Good+ - Heavy wear, possible pieces missing",
+      "2.0": "Good - Extensive wear, tape repairs possible",
+      "1.8": "Good- - Very heavy wear",
+      "1.5": "Fair/Good - Extremely worn, possible missing pieces",
+      "1.0": "Fair - Heavily damaged but still mostly complete",
+      "0.5": "Poor - Barely readable, major pieces missing"
+    }
+  },
+  "defect_categories": {
+    "cover": {
+      "tears": {"minor": -0.2, "moderate": -0.5, "major": -1.0},
+      "creases": {"minor": -0.1, "moderate": -0.3, "major": -0.6},
+      "stains": {"minor": -0.2, "moderate": -0.4, "major": -0.8},
+      "fading": {"minor": -0.1, "moderate": -0.3, "major": -0.5},
+      "gloss_loss": {"minor": -0.1, "moderate": -0.2, "major": -0.4},
+      "foxing": {"minor": -0.2, "moderate": -0.4, "major": -0.7},
+      "writing": {"minor": -0.3, "moderate": -0.5, "major": -0.8}
+    },
+    "spine": {
+      "stress_lines": {"minor": -0.1, "moderate": -0.3, "major": -0.5},
+      "roll": {"minor": -0.2, "moderate": -0.4, "major": -0.7},
+      "split": {"minor": -0.3, "moderate": -0.6, "major": -1.0},
+      "tears": {"minor": -0.2, "moderate": -0.5, "major": -0.8}
+    },
+    "staples": {
+      "rust": {"minor": -0.2, "moderate": -0.4, "major": -0.7},
+      "missing": {"minor": -0.5, "moderate": -0.8, "major": -1.2},
+      "replaced": {"minor": -0.3, "moderate": -0.5, "major": -0.8},
+      "loose": {"minor": -0.2, "moderate": -0.4, "major": -0.6}
+    },
+    "pages": {
+      "browning": {"minor": -0.1, "moderate": -0.3, "major": -0.5},
+      "brittleness": {"minor": -0.2, "moderate": -0.5, "major": -0.8},
+      "tears": {"minor": -0.2, "moderate": -0.4, "major": -0.7},
+      "missing": {"minor": -0.5, "moderate": -1.0, "major": -2.0},
+      "stains": {"minor": -0.2, "moderate": -0.4, "major": -0.6}
+    },
+    "corners": {
+      "blunting": {"minor": -0.1, "moderate": -0.2, "major": -0.4},
+      "creases": {"minor": -0.1, "moderate": -0.2, "major": -0.4},
+      "chips": {"minor": -0.2, "moderate": -0.4, "major": -0.6}
+    }
+  },
+  "era_detection_keywords": {
+    "platinum": ["Famous Funnies", "Funnies on Parade", "early strips", "newspaper reprints"],
+    "golden": ["Action Comics", "Detective Comics", "Captain America", "Timely", "Fawcett", "All-American"],
+    "silver": ["Fantastic Four", "Amazing Spider-Man", "Justice League", "12c", "15c", "Marvel"],
+    "bronze": ["Giant-Size", "20c", "25c", "30c", "Marvel Value Stamp"],
+    "copper": ["Crisis", "Dark Knight", "Watchmen", "75c", "direct edition"],
+    "modern": ["variant cover", "1:25", "CGC", "CBCS", "$2.99", "$3.99", "$4.99"]
+  }
+}
